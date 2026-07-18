@@ -28,6 +28,11 @@ out/
 build
 dist
 
+# Go development artifacts
+.air/
+tmp/
+coverage.out
+
 
 # Opencode
 opencode.jsonc
