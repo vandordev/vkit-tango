@@ -6,7 +6,7 @@
 
 **Architecture:** The root becomes a Go module alongside the Bun workspace. Go API, worker, migration, usecase, Ent, River, and configuration code live below `apps/`, `internal/`, and `database/`; TypeScript owns web presentation and Socket.IO. Ent mutations and River enqueue/completion share PostgreSQL transactions, while realtime delivery is a retryable River job to a private Socket.IO HTTP endpoint.
 
-**Tech Stack:** Go 1.24, Huma v2, Ent, pgx v5, River, Goose, PostgreSQL 16, TanStack Start, Socket.IO, AsyncAPI, Hey API, Bun, Taskfile, Docker Compose.
+**Tech Stack:** Go 1.25, Huma v2, Ent, pgx v5, River, Goose, PostgreSQL 16, TanStack Start, Socket.IO, AsyncAPI, Hey API, Bun, Taskfile, Docker Compose.
 
 ---
 
@@ -23,7 +23,7 @@
 | Path | Responsibility |
 | --- | --- |
 | `go.mod`, `go.sum` | Root Go module and pinned backend dependencies. |
-| `database/schema/entc.go`, `database/schema/schema.go` | Ent generation configuration and empty domain-neutral schema package. |
+| `database/schema/entc.go`, `database/schema/systemmetadata.go` | Ent generation configuration and the UUID-keyed, domain-neutral platform metadata schema. |
 | `database/migrations/*.sql` | Immutable Goose migrations, including River vendor migrations. |
 | `internal/platform/db/` | Generated Ent client and database connection helpers. |
 | `internal/config/` | Go YAML loading, interpolation, typed validation, and shared-fixture tests. |
@@ -80,7 +80,8 @@
   `github.com/danielgtaylor/huma/v2`, `github.com/jackc/pgx/v5`,
   `github.com/pressly/goose/v3`, `github.com/riverqueue/river`,
   `github.com/stretchr/testify`, and `gopkg.in/yaml.v3`. Keep the Go directive
-  at `go 1.24` and let `go mod tidy` own `go.sum`.
+  at `go 1.25` (required by the pinned Ent generator dependency set) and let
+  `go mod tidy` own `go.sum`.
 
 - [ ] **Step 4: Implement explicit bootstrap validation and process skeletons.**
 
@@ -304,8 +305,9 @@
 - [ ] **Step 3: Add Ent source and deterministic generation.**
 
   Configure `entc.go` to generate into `internal/platform/db`, enable the
-  required SQL/transaction feature flags, and start with an empty schema package
-  so the baseline has no product model. Add a Taskfile command in a later task
+  required SQL/transaction feature flags, and add only the platform-owned
+  `SystemMetadata` schema with `uuid.UUID` primary key, unique `key`, JSON
+  `value`, and timestamps. It is not a product model. Add a Taskfile command in a later task
   that runs exactly:
 
   ```bash

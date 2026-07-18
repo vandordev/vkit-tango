@@ -23,6 +23,9 @@ Prisma, Elysia, pg-boss, a TypeScript worker/scheduler, or uppercase
 environment-first configuration. Historical documents remain intact as records
 of the previous baseline.
 
+The committed module targets Go 1.25. Ent's pinned code-generation dependency
+set requires this minimum; the repository's installed Go toolchain is 1.25.7.
+
 ## 2. Goals and Non-Goals
 
 ### Goals
@@ -120,6 +123,9 @@ Ent is the sole application ORM. It is used for both mutations and direct
 reads. No Go code uses Prisma or sqlc.
 
 - `database/schema` defines the current Ent schema.
+- `SystemMetadata` is the sole platform-owned baseline entity. It stores
+  non-product metadata by unique key and uses an application-generated UUID
+  primary key; it must not become a generic product-data table.
 - `database/migrations` stores ordered Goose migrations and is the only means
   of changing a deployed database.
 - `apps/migrate` executes Goose. Production never calls `ent.Schema.Create`.
