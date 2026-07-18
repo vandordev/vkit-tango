@@ -7,8 +7,8 @@ import (
 	"github.com/riverqueue/river/riverdriver/riverdatabasesql"
 )
 
-func NewClient(database *sql.DB) (*riverqueue.Client[*sql.Tx], error) {
+func NewClient(database *sql.DB, workers *riverqueue.Workers) (*riverqueue.Client[*sql.Tx], error) {
 	return riverqueue.NewClient(riverdatabasesql.New(database), &riverqueue.Config{
-		Workers: riverqueue.NewWorkers(),
+		Workers: workers,
 	})
 }

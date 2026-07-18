@@ -35,6 +35,7 @@ type Migrate struct {
 
 type Worker struct {
 	Database   Database
+	Realtime   Realtime
 	MaxWorkers int
 }
 
@@ -57,7 +58,7 @@ func LoadMigrate(loader Loader) (Migrate, error) {
 }
 
 func LoadWorker(loader Loader) (Worker, error) {
-	loaded, err := loader.Load("database", "worker")
+	loaded, err := loader.Load("database", "worker", "realtime")
 	if err != nil {
 		return Worker{}, err
 	}
@@ -75,7 +76,9 @@ func LoadWorker(loader Loader) (Worker, error) {
 		return Worker{}, err
 	}
 
-	return Worker{Database: Database{URL: stringValue(database, "url")}, MaxWorkers: maxWorkers}, nil
+	realtime, err := object(loaded, "realtime")
+	if err != nil { return Worker{}, err }
+	return Worker{Database: Database{URL: stringValue(database, "url")}, Realtime: Realtime{PublicURL: stringValue(realtime, "public_url"), InternalAPIKey: stringValue(realtime, "internal_api_key")}, MaxWorkers: maxWorkers}, nil
 }
 
 func LoadAPI(loader Loader) (API, error) {

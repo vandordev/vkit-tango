@@ -32,7 +32,9 @@ func TestLoadMigrateParsesDatabaseModule(t *testing.T) {
 	loaded, err := config.LoadMigrate(config.Loader{
 		Directory: filepath.Join("..", "..", "config"),
 		Environment: map[string]string{
-			"DATABASE_URL": "postgresql://database",
+			"DATABASE_URL":              "postgresql://database",
+			"REALTIME_TICKET_SECRET":    "ticket-secret",
+			"REALTIME_INTERNAL_API_KEY": "internal-key",
 		},
 	})
 	if err != nil {
@@ -48,7 +50,9 @@ func TestLoadWorkerParsesConcurrency(t *testing.T) {
 	loaded, err := config.LoadWorker(config.Loader{
 		Directory: filepath.Join("..", "..", "config"),
 		Environment: map[string]string{
-			"DATABASE_URL": "postgresql://database",
+			"DATABASE_URL":              "postgresql://database",
+			"REALTIME_TICKET_SECRET":    "ticket-secret",
+			"REALTIME_INTERNAL_API_KEY": "internal-key",
 		},
 	})
 	if err != nil {
@@ -57,5 +61,8 @@ func TestLoadWorkerParsesConcurrency(t *testing.T) {
 
 	if loaded.MaxWorkers != 10 {
 		t.Fatalf("MaxWorkers = %d, want 10", loaded.MaxWorkers)
+	}
+	if loaded.Realtime.InternalAPIKey != "internal-key" {
+		t.Fatalf("Realtime.InternalAPIKey = %q, want internal-key", loaded.Realtime.InternalAPIKey)
 	}
 }

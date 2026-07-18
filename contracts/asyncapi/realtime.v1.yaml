@@ -1,0 +1,50 @@
+asyncapi: 3.0.0
+info:
+  title: VKit realtime publisher
+  version: 1.0.0
+channels:
+  internalEvents:
+    address: /internal/events
+    messages:
+      resourceUpdated:
+        $ref: '#/components/messages/resourceUpdated'
+operations:
+  publishResourceUpdated:
+    action: send
+    channel:
+      $ref: '#/channels/internalEvents'
+    messages:
+      - $ref: '#/channels/internalEvents/messages/resourceUpdated'
+components:
+  securitySchemes:
+    realtimeApiKey:
+      type: httpApiKey
+      in: header
+      name: x-realtime-api-key
+  messages:
+    resourceUpdated:
+      headers:
+        type: object
+        required: [x-realtime-api-key]
+        properties:
+          x-realtime-api-key:
+            type: string
+      payload:
+        $ref: '#/components/schemas/resourceUpdated'
+  schemas:
+    resourceUpdated:
+      type: object
+      required: [type, event_id, occurred_at, resource_id, workspace_id]
+      properties:
+        type:
+          const: resource.updated.v1
+        event_id:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        resource_id:
+          type: string
+        workspace_id:
+          type: string
