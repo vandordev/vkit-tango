@@ -4,10 +4,10 @@ package generatedfx
 
 import (
 	"github.com/vandordev/vkit-tango/internal/contract"
-	usecase "github.com/vandordev/vkit-tango/internal/usecase"
+	usecase_internal_usecase "github.com/vandordev/vkit-tango/internal/usecase"
 	"go.uber.org/fx"
 )
 
 var UsecaseModule = fx.Options(
-	fx.Provide(fx.Annotate(usecase.NewSetSystemMetadata, fx.As(new(contract.Command[usecase.SetSystemMetadataInput, usecase.SetSystemMetadataResult])))),
+	fx.Provide(fx.Annotate(usecase_internal_usecase.NewSetSystemMetadata, fx.As(new(contract.Command[usecase_internal_usecase.SetSystemMetadataInput, usecase_internal_usecase.SetSystemMetadataResult])))),
 )

@@ -4,13 +4,13 @@ package generatedfx
 
 import (
 	riverqueue "github.com/riverqueue/river"
-	river "github.com/vandordev/vkit-tango/internal/scheduler/river"
+	river_internal_scheduler_river "github.com/vandordev/vkit-tango/internal/scheduler/river"
 	"go.uber.org/fx"
 )
 
 var SchedulerModule = fx.Options(
-	fx.Provide(river.NewBaselineRegistrar),
-	fx.Provide(fx.Annotate(func(registrar *river.BaselineRegistrar) []*riverqueue.PeriodicJob {
+	fx.Provide(river_internal_scheduler_river.NewBaselineRegistrar),
+	fx.Provide(fx.Annotate(func(registrar *river_internal_scheduler_river.BaselineRegistrar) []*riverqueue.PeriodicJob {
 		return registrar.RegisterPeriodicJobs()
 	}, fx.ResultTags(`group:"periodic_jobs,flatten"`))),
 )

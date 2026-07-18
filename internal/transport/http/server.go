@@ -12,13 +12,13 @@ import (
 	"go.uber.org/fx"
 )
 
-func NewServer(lifecycle fx.Lifecycle, settings config.HTTPAPI, router chi.Router) *stdhttp.Server {
+func NewServer(lifecycle fx.Lifecycle, shutdowner fx.Shutdowner, settings config.HTTPAPI, router chi.Router) *stdhttp.Server {
 	server := &stdhttp.Server{Addr: fmt.Sprintf("%s:%d", settings.Host, settings.Port), Handler: router, ReadHeaderTimeout: 5 * time.Second}
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go func() {
 				if err := server.ListenAndServe(); err != nil && !errors.Is(err, stdhttp.ErrServerClosed) {
-					return
+					_ = shutdowner.Shutdown(fx.ExitCode(1))
 				}
 			}()
 			return nil

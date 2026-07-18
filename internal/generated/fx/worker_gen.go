@@ -4,17 +4,17 @@ package generatedfx
 
 import (
 	riverqueue "github.com/riverqueue/river"
-	river "github.com/vandordev/vkit-tango/internal/worker/river"
+	river_internal_worker_river "github.com/vandordev/vkit-tango/internal/worker/river"
 	"go.uber.org/fx"
 )
 
 var WorkerModule = fx.Options(
-	fx.Provide(river.NewRealtimePublishRegistrar),
-	fx.Invoke(func(registrar *river.RealtimePublishRegistrar, workers *riverqueue.Workers) {
+	fx.Provide(river_internal_worker_river.NewRealtimePublishRegistrar),
+	fx.Invoke(func(registrar *river_internal_worker_river.RealtimePublishRegistrar, workers *riverqueue.Workers) {
 		registrar.RegisterWorkers(workers)
 	}),
-	fx.Provide(river.NewSetSystemMetadataRegistrar),
-	fx.Invoke(func(registrar *river.SetSystemMetadataRegistrar, workers *riverqueue.Workers) {
+	fx.Provide(river_internal_worker_river.NewSetSystemMetadataRegistrar),
+	fx.Invoke(func(registrar *river_internal_worker_river.SetSystemMetadataRegistrar, workers *riverqueue.Workers) {
 		registrar.RegisterWorkers(workers)
 	}),
 )

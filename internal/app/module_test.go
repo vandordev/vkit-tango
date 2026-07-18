@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/danielgtaylor/huma/v2"
+	riverqueue "github.com/riverqueue/river"
 	"github.com/vandordev/vkit-tango/internal/config"
 	"go.uber.org/fx"
 )
@@ -28,8 +29,16 @@ func TestWorkerModuleBuilds(t *testing.T) {
 }
 
 func TestSchedulerModuleBuilds(t *testing.T) {
-	app := fx.New(SchedulerModule, fx.Replace(config.Scheduler{MaxWorkers: 1}, &sql.DB{}))
+	var jobs []*riverqueue.PeriodicJob
+	app := fx.New(
+		SchedulerModule,
+		fx.Replace(config.Scheduler{MaxWorkers: 1}, &sql.DB{}),
+		fx.Invoke(fx.Annotate(func(generated []*riverqueue.PeriodicJob) { jobs = generated }, fx.ParamTags(`group:"periodic_jobs"`))),
+	)
 	if err := app.Err(); err != nil {
 		t.Fatal(err)
+	}
+	if len(jobs) != 0 {
+		t.Fatalf("periodic jobs = %d, want baseline empty schedule", len(jobs))
 	}
 }

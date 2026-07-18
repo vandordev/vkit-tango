@@ -9,8 +9,8 @@ import (
 	"go.uber.org/fx"
 )
 
-func TestSchedulerRootBuildsGeneratedSchedule(t *testing.T) {
-	fxApp := fx.New(app.SchedulerModule, fx.Replace(config.Scheduler{MaxWorkers: 1}, &sql.DB{}))
+func TestWorkerRootBuildsGeneratedRegistrars(t *testing.T) {
+	fxApp := fx.New(app.WorkerModule, fx.Replace(config.Worker{MaxWorkers: 1}, &sql.DB{}))
 	if err := fxApp.Err(); err != nil {
 		t.Fatal(err)
 	}

@@ -45,11 +45,11 @@ tasks:
     cmds: ["rtk task api:openapi", "rtk bun run --cwd apps/web api:generate"]
   api:client:check:
     desc: Verify generated API client is current
-    cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated"]
+    cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated apps/web/src/routeTree.gen.ts"]
   add:usecase:
     cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:usecase --apply --set name={{.name}}', 'task sync:usecase']
   add:http-handler:
-    cmds: ['test -n "{{.name}}" && test -n "{{.method}}" && test -n "{{.path}}" || { echo "name, method, and path are required" >&2; exit 1; }', 'case "{{.method}}" in GET|POST|PUT|PATCH|DELETE) ;; *) echo "unsupported HTTP method: {{.method}}" >&2; exit 1;; esac', 'rtk vx gen vandor/go:http-handler --apply --set name={{.name}} --set method={{.method}} --set path={{.path}}', 'task sync:http']
+    cmds: ['test -n "{{.name}}" && test -n "{{.method}}" && test -n "{{.path}}" || { echo "name, method, and path are required" >&2; exit 1; }', 'case "{{.method}}" in GET|POST|PUT|PATCH|DELETE) ;; *) echo "unsupported HTTP method: {{.method}}" >&2; exit 1;; esac', 'case "{{.path}}" in /api/v1/*) ;; *) echo "path must begin with /api/v1/: {{.path}}" >&2; exit 1;; esac', 'rtk vx gen vandor/go:http-handler --apply --set name={{.name}} --set method={{.method}} --set path={{.path}}', 'task sync:http']
   add:job:
     cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:job --apply --set name={{.name}}', 'task sync:worker']
   add:scheduler:
@@ -63,8 +63,7 @@ tasks:
   sync:scheduler:
     cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface scheduler"]
   sync:
-    deps: [sync:usecase, sync:http, sync:worker, sync:scheduler]
-    cmds: ["rtk gofmt -w internal/generated/fx"]
+    cmds: ["rtk task sync:usecase", "rtk task sync:http", "rtk task sync:worker", "rtk task sync:scheduler", "rtk gofmt -w internal/generated/fx"]
   test:
     desc: Run Go and retained TypeScript tests
     cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs"]
@@ -76,7 +75,7 @@ tasks:
     cmds: ["rtk bun run --cwd apps/web check-types", "rtk bun run --cwd apps/realtime check-types", "rtk bun run --cwd packages/config check-types", "rtk bun run --cwd packages/realtime check-types"]
   quality:
     desc: Run tests, lint, typechecks, and API generation check
-    cmds: ["rtk task test", "rtk go vet ./...", "rtk task lint", "rtk task check-types", "rtk task api:client:check", "rtk git diff --check"]
+    cmds: ["rtk task test", "rtk go vet ./...", "rtk task lint", "rtk task check-types", "rtk task api:client:check", "rtk ./scripts/check-generated.sh", "rtk git diff --check"]
   build:
     desc: Build all Go and retained TypeScript runtimes
     cmds: ["rtk go build ./apps/api ./apps/worker ./apps/scheduler ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build"]

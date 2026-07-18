@@ -3,11 +3,13 @@
 package generatedfx
 
 import (
-	system_metadata "github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
+	system_metadata_internal_transport_http_handler_system_metadata "github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
 	"go.uber.org/fx"
 )
 
 var HttpModule = fx.Options(
-	fx.Provide(system_metadata.NewSetSystemMetadataHandler),
-	fx.Invoke(func(handler *system_metadata.SetSystemMetadataHandler) { handler.RegisterRoutes() }),
+	fx.Provide(system_metadata_internal_transport_http_handler_system_metadata.NewSetSystemMetadataHandler),
+	fx.Invoke(func(handler *system_metadata_internal_transport_http_handler_system_metadata.SetSystemMetadataHandler) {
+		handler.RegisterRoutes()
+	}),
 )

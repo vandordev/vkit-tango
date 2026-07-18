@@ -7,7 +7,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/vandordev/vkit-tango/internal/contract"
+	"{{ project.go.module }}/internal/contract"
 )
 
 type {{ name | pascal }}Input struct{}
@@ -32,8 +32,8 @@ package usecase_test
 import (
 	"testing"
 
-	"github.com/vandordev/vkit-tango/internal/contract"
-	"github.com/vandordev/vkit-tango/internal/usecase"
+	"{{ project.go.module }}/internal/contract"
+	"{{ project.go.module }}/internal/usecase"
 )
 
 func TestNew{{ name | pascal }}ImplementsCommand(t *testing.T) {

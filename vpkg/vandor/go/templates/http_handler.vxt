@@ -10,9 +10,9 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/vandordev/vkit-tango/internal/contract"
-	"github.com/vandordev/vkit-tango/internal/transport/http/method"
-	"github.com/vandordev/vkit-tango/internal/usecase"
+	"{{ project.go.module }}/internal/contract"
+	"{{ project.go.module }}/internal/transport/http/method"
+	"{{ project.go.module }}/internal/usecase"
 )
 
 type {{ name | pascal }}Handler struct {
@@ -30,7 +30,8 @@ func (handler *{{ name | pascal }}Handler) RegisterRoutes() {
 	method.{{ method | upper }}(handler.api, "{{ path }}", "{{ name | pascal }}", nil, handler.Handle)
 }
 
-func (handler *{{ name | pascal }}Handler) Handle(context.Context, *struct{}) (*struct{}, error) {
-	return &struct{}{}, nil
+func (handler *{{ name | pascal }}Handler) Handle(ctx context.Context, _ *struct{}) (*struct{}, error) {
+	_, err := handler.command.Execute(ctx, usecase.{{ name | pascal }}Input{})
+	return &struct{}{}, err
 }
 @endfile

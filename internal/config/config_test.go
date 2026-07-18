@@ -66,3 +66,20 @@ func TestLoadWorkerParsesConcurrency(t *testing.T) {
 		t.Fatalf("Realtime.InternalAPIKey = %q, want internal-key", loaded.Realtime.InternalAPIKey)
 	}
 }
+
+func TestLoadSchedulerParsesWorkerConcurrency(t *testing.T) {
+	loaded, err := config.LoadScheduler(config.Loader{
+		Directory: filepath.Join("..", "..", "config"),
+		Environment: map[string]string{
+			"DATABASE_URL":              "postgresql://database",
+			"REALTIME_TICKET_SECRET":    "ticket-secret",
+			"REALTIME_INTERNAL_API_KEY": "internal-key",
+		},
+	})
+	if err != nil {
+		t.Fatalf("LoadScheduler() error = %v", err)
+	}
+	if loaded.MaxWorkers != 10 {
+		t.Fatalf("MaxWorkers = %d, want 10", loaded.MaxWorkers)
+	}
+}

@@ -8,8 +8,8 @@ import (
 	"context"
 
 	riverqueue "github.com/riverqueue/river"
-	"github.com/vandordev/vkit-tango/internal/contract"
-	"github.com/vandordev/vkit-tango/internal/usecase"
+	"{{ project.go.module }}/internal/contract"
+	"{{ project.go.module }}/internal/usecase"
 )
 
 type {{ name | pascal }}Args struct{}
