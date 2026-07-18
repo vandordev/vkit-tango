@@ -4,7 +4,7 @@ package generatedfx
 
 import (
 	"github.com/vandordev/vkit-tango/internal/contract"
-	"github.com/vandordev/vkit-tango/internal/usecase"
+	usecase "github.com/vandordev/vkit-tango/internal/usecase"
 	"go.uber.org/fx"
 )
 

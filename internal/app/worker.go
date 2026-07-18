@@ -8,7 +8,6 @@ import (
 	generatedfx "github.com/vandordev/vkit-tango/internal/generated/fx"
 	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
 	platformriver "github.com/vandordev/vkit-tango/internal/platform/river"
-	workerriver "github.com/vandordev/vkit-tango/internal/worker/river"
 	"go.uber.org/fx"
 )
 
@@ -19,12 +18,7 @@ func workerDatabase(settings config.Worker) config.Database { return settings.Da
 func NewPublisher(settings config.Worker) platformrealtime.Publisher {
 	return platformrealtime.HTTPPublisher{BaseURL: settings.Realtime.PublicURL, APIKey: settings.Realtime.InternalAPIKey}
 }
-func NewWorkers(metadata *workerriver.SetSystemMetadataRegistrar, realtime *workerriver.RealtimePublishRegistrar) *riverqueue.Workers {
-	workers := riverqueue.NewWorkers()
-	metadata.RegisterWorkers(workers)
-	realtime.RegisterWorkers(workers)
-	return workers
-}
+func NewWorkers() *riverqueue.Workers { return riverqueue.NewWorkers() }
 func NewWorkerClient(database *sql.DB, workers *riverqueue.Workers, settings config.Worker) (*riverqueue.Client[*sql.Tx], error) {
 	return platformriver.NewClient(database, workers, settings.MaxWorkers, nil)
 }

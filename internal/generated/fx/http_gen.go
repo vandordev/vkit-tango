@@ -3,7 +3,7 @@
 package generatedfx
 
 import (
-	"github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
+	system_metadata "github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
 	"go.uber.org/fx"
 )
 
