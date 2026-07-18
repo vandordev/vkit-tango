@@ -18,7 +18,7 @@ The default application is `apps/web` + `apps/api`:
 - `packages/database`: Prisma schema, migrations, generated client, and singleton client.
 - `packages/application`: mutation usecases and domain rules.
 - `packages/config`: typed server runtime configuration.
-- UI choice is project-scoped: Mantine is the current default; shadcn/ui is an alternative, not a second baseline.
+- UI choice is project-scoped: shadcn/ui is the current baseline. Mantine, MUI, and other component libraries are valid alternatives when a project deliberately chooses one; they are not second baselines.
 
 `apps/worker`, `apps/scheduler`, and `packages/queue` are optional. Keep them when a project needs durable asynchronous jobs; remove or omit them, their env files, Compose services, Dockerfiles, and dependencies when it does not. Do not introduce these runtimes for synchronous features.
 
@@ -58,7 +58,7 @@ The default application is `apps/web` + `apps/api`:
 ### UI
 
 - Read `.agent/ui.md` before changing the web design system.
-- Use one primary UI system per project. Do not mix Mantine and shadcn primitives as a default.
+- Use one primary UI system per project. Do not mix shadcn, Mantine, MUI, or other primitive libraries as defaults.
 
 ### Optional Jobs
 

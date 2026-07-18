@@ -6,7 +6,9 @@ Convert this repository into a reusable, domain-neutral Bun/Turborepo boilerplat
 
 ## Scope
 
-This change removes the existing tRPC, Next.js internal API routes, SSO/auth integration, Sleekflow persistence, and task-management-specific documentation. It retains the Bun, Turbo, Next.js, Elysia, Prisma, PostgreSQL, Mantine, and TanStack Query foundations where they support the new architecture. A PostgreSQL-backed queue is included as the default asynchronous-processing foundation.
+This historical change removed the existing tRPC, Next.js internal API routes, SSO/auth integration, Sleekflow persistence, and task-management-specific documentation. It retained the Bun, Turbo, Next.js, Elysia, Prisma, PostgreSQL, Mantine, and TanStack Query foundations at that time. A PostgreSQL-backed queue was included as the default asynchronous-processing foundation.
+
+> **Superseded UI baseline:** This document records the former Mantine-based starter. The current web baseline is shadcn/ui; Mantine, MUI, and other libraries remain valid alternatives when a project chooses one primary UI system. See [the shadcn/ui baseline design](2026-07-18-shadcn-ui-baseline-design.md).
 
 The web app exposes public pages in `app/(public)` and dashboard pages in `app/(dashboard)`. These are route-group organization boundaries only; authentication is not included in the boilerplate.
 

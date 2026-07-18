@@ -11,11 +11,11 @@ vkit-fast gives every new project the same foundation:
 - Usecases for mutation business rules
 - PostgreSQL-backed jobs with separate scheduler and worker processes
 - Taskfile as the single developer command surface
-- A flexible web UI baseline: Mantine by default, shadcn/ui as an alternative
+- A flexible web UI baseline: shadcn/ui by default, with Mantine, MUI, or another library as deliberate alternatives
 
 The repository is intentionally domain-neutral. Start with the architecture and conventions, then add the product domain you need.
 
-The web app currently uses Mantine for its theme and dashboard primitives. Projects that need source-owned Tailwind components can switch to shadcn/ui, but should choose one primary UI system rather than carrying both as competing defaults.
+The web app currently uses shadcn/ui for source-owned Tailwind primitives. A project may instead choose Mantine, MUI, or another library, but should use one primary UI system rather than carrying competing defaults.
 
 ## Why vkit-fast?
 
@@ -61,7 +61,7 @@ The queue boundary uses `pg-boss` on PostgreSQL, so durable jobs, retries, delay
 
 | Workspace              | Responsibility                                                                                            |
 | ---------------------- | --------------------------------------------------------------------------------------------------------- |
-| `apps/web`             | TanStack Start routes, Vite/Nitro runtime, Mantine UI, and Eden consumers                                 |
+| `apps/web`             | TanStack Start routes, Vite/Nitro runtime, shadcn/ui baseline, and Eden consumers                         |
 | `apps/api`             | Elysia app factory, standalone HTTP entrypoint, `/api` routes, health checks, validation, errors, logging |
 | `apps/scheduler`       | Optional time-based job scheduling and enqueueing                                                         |
 | `apps/realtime`        | Optional Socket.IO runtime with authenticated tickets and authorized rooms                                |

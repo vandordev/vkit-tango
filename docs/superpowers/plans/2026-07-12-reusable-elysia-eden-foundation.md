@@ -8,6 +8,8 @@
 
 **Tech Stack:** Bun workspaces, Turborepo, TypeScript, Elysia, `@elysia/eden`, Next.js App Router, Mantine, Prisma, PostgreSQL, Zod, T3 Env, Bun test.
 
+> **Superseded UI baseline:** This is a historical plan that recorded the former Mantine starter. The current web baseline is shadcn/ui; Mantine, MUI, and other component libraries remain valid alternatives only when a project uses one primary UI system. See [the shadcn/ui baseline design](../specs/2026-07-18-shadcn-ui-baseline-design.md).
+
 ---
 
 ## File Structure

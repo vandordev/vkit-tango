@@ -4,9 +4,9 @@
 
 **Goal:** Add English, production-safe global not-found and error fallback states to the TanStack Start web application.
 
-**Architecture:** Keep fallback ownership in `src/routes/__root.tsx`, where TanStack Router resolves root-level `notFoundComponent` and `errorComponent`. The components use existing Mantine primitives and TanStack Router links; no API or new route is needed.
+**Architecture:** Keep fallback ownership in `src/routes/__root.tsx`, where TanStack Router resolves root-level `notFoundComponent` and `errorComponent`. The current components use source-owned shadcn/ui primitives and TanStack Router links; no API or new route is needed. The Mantine implementation details below are historical and superseded by [the shadcn/ui baseline design](../specs/2026-07-18-shadcn-ui-baseline-design.md).
 
-**Tech Stack:** TanStack Router, TanStack Start, React 19, Mantine 8, Bun test.
+**Tech Stack:** TanStack Router, TanStack Start, React 19, shadcn/ui, Tailwind CSS v4, Bun test.
 
 ---
 
@@ -37,7 +37,7 @@ Expected: FAIL because the root route does not configure fallback components.
 
 - [ ] **Step 3: Add the fallback components.**
 
-In `apps/web/src/routes/__root.tsx`, import `Button`, `Group`, `Stack`, `Text`, and `Title` from Mantine; import `Link`, `type ErrorComponentProps`, and `createRootRoute` from TanStack Router. Register these options on the existing root route:
+The historical Mantine import instructions in this task are superseded. In the current `apps/web/src/routes/__root.tsx`, import the local shadcn `Button`, `Link`, `type ErrorComponentProps`, and `createRootRoute`; register these options on the existing root route:
 
 ```tsx
 notFoundComponent: NotFoundPage,
@@ -94,7 +94,7 @@ Expected: FAIL because the fallback copy and reset control do not exist.
 
 - [ ] **Step 3: Keep recovery controls accessible.**
 
-Ensure the `Group` has normal button sizing and wraps on narrow viewports. Use the existing Mantine color system and avoid custom gradients, decorative illustrations, or new CSS files.
+Ensure the action row wraps on narrow viewports. Use shadcn semantic tokens and avoid custom gradients, decorative illustrations, or new CSS files.
 
 - [ ] **Step 4: Run focused tests and typecheck.**
 

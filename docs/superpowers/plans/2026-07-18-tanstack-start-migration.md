@@ -6,7 +6,9 @@
 
 **Architecture:** TanStack Start owns the application document, file-based page routes, and a thin custom server entry. `src/server.ts` forwards matching `/api/*` and `/health` Web `Request` objects to Elysia's existing `app.fetch`, while Eden continues to be the sole browser and server API client. Vite builds the web application and Nitro emits a Bun-compatible `.output` server.
 
-**Tech Stack:** Bun 1.3.14, Vite 8.1.5, TanStack Start 1.168.30, TanStack Router 1.170.18, TanStack Router plugin 1.168.22, Nitro 3.0.260610-beta, React 19, Mantine 8, Elysia, Eden, Prisma, Turbo, Docker.
+**Tech Stack:** Bun 1.3.14, Vite 8.1.5, TanStack Start 1.168.30, TanStack Router 1.170.18, TanStack Router plugin 1.168.22, Nitro 3.0.260610-beta, React 19, shadcn/ui, Tailwind CSS v4, Elysia, Eden, Prisma, Turbo, Docker.
+
+> **Superseded UI baseline:** The Mantine-specific dependency and root-route examples below record the migration’s original state. The current default is shadcn/ui; Mantine, MUI, and other libraries are valid alternatives only when a project deliberately selects one primary UI system. See [the shadcn/ui baseline design](../specs/2026-07-18-shadcn-ui-baseline-design.md).
 
 ---
 
@@ -16,7 +18,7 @@
 | --- | --- |
 | `apps/web/vite.config.ts` | Compose Vite, TanStack Start, Router generation, React, and Bun-targeted Nitro. |
 | `apps/web/src/router.tsx` | Create and register the typed TanStack Router instance. |
-| `apps/web/src/routes/__root.tsx` | HTML document, metadata, global styles, Mantine, React Query, and notifications. |
+| `apps/web/src/routes/__root.tsx` | HTML document, metadata, global shadcn/Tailwind styles, React Query, and fallback states. |
 | `apps/web/src/routes/index.tsx` | Public `/` route. |
 | `apps/web/src/routes/dashboard.tsx` | `/dashboard` route. |
 | `apps/web/src/server.ts` | TanStack Start server entry that forwards Elysia `/api/*` and `/health` requests. |

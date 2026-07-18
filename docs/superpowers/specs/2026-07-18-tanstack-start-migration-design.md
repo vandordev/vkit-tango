@@ -4,7 +4,7 @@
 
 Replace the `apps/web` Next.js runtime with TanStack Start while preserving the boilerplate's existing product boundaries: Elysia remains the only HTTP API, Eden remains the only frontend API client, and the default web process continues to embed the API at the same public origin.
 
-The migration deliberately does not add a product domain, authentication, a second API transport, Tailwind, or shadcn/ui. Mantine remains the web UI baseline.
+The original migration deliberately did not add a product domain, authentication, a second API transport, Tailwind, or shadcn/ui. Its former Mantine details are superseded by [the shadcn/ui baseline design](2026-07-18-shadcn-ui-baseline-design.md): shadcn/ui is now the web baseline, while Mantine, MUI, and other libraries remain valid project-level alternatives.
 
 ## Selected approach
 
@@ -24,7 +24,7 @@ This preserves the public origin and endpoint paths (`/api/status`, `/api/docs`,
 The former `app/` directory is replaced with TanStack Router source under `apps/web/src/`:
 
 - `router.tsx` creates and registers the TanStack Router instance from generated routes. It enables scroll restoration and intent preloading.
-- `routes/__root.tsx` owns the HTML document, metadata, Mantine providers, the React Query provider, notifications, global styles, and the TanStack `HeadContent` and `Scripts` components.
+- `routes/__root.tsx` owns the HTML document, metadata, the React Query provider, shadcn/Tailwind global styles, and the TanStack `HeadContent` and `Scripts` components.
 - `routes/index.tsx` is the public landing route and `routes/dashboard.tsx` is the dashboard route. They preserve the current content and paths.
 - `server.ts` is the Elysia adapter in TanStack Start's custom server-entry extension point. It intercepts `/api/*` and `/health`; it does not define a UI route.
 - `lib/api/client.ts` remains the browser-only Eden facade. It calls the same-origin `/api` base path and imports only `type App` from `@repo/api`.
@@ -36,7 +36,7 @@ The generated `routeTree.gen.ts` is a build artifact produced by the TanStack Ro
 
 ## Dependencies, build, and runtime
 
-`apps/web/package.json` removes `next`, `@t3-oss/env-nextjs`, `server-only`, and Next-specific lint/typecheck support. It adds pinned compatible versions of Vite, TanStack Start, TanStack Router, the Router Vite plugin, and Nitro. The migration uses the installed `../my-tanstack-start` only as a structural reference; it does not copy its Tailwind, shadcn, Prisma, demo, or floating `latest` dependency choices.
+`apps/web/package.json` removes `next`, `@t3-oss/env-nextjs`, `server-only`, and Next-specific lint/typecheck support. It adds pinned compatible versions of Vite, TanStack Start, TanStack Router, the Router Vite plugin, and Nitro. The later shadcn/ui baseline follows the installed `../my-tanstack-start` only as a structural reference and retains pinned dependency choices.
 
 `vite.config.ts` composes TanStack Start, the Router plugin, React, and Nitro. Nitro is configured with the Bun preset so the production web process runs on Bun, matching the rest of the repository. Workspace API packages required by the embedded adapter are explicitly handled by the SSR build configuration so `@repo/api` is not accidentally emitted as a browser dependency.
 
@@ -91,5 +91,5 @@ The migration is accepted when `task test:web`, `task check-types:web`, and `tas
 - Replacing Eden with TanStack Query fetchers, tRPC, or direct page-level `fetch` calls.
 - Removing the standalone Elysia server entrypoint.
 - Changing the database, queue, worker, scheduler, storage, or realtime implementation.
-- Changing the UI system from Mantine to Tailwind or shadcn/ui.
+- The original migration did not change the UI system; the later shadcn/ui baseline change is documented separately and permits Mantine, MUI, or another single chosen system in downstream projects.
 - Supporting a deployment target other than the existing Bun-oriented container baseline in this migration.

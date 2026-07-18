@@ -11,7 +11,7 @@ The global root route owns both fallback states:
 - A not-found state handles unregistered URLs.
 - An error boundary handles errors thrown by a route component, loader, or other routed UI.
 
-Both states are lightweight Mantine layouts that preserve the application's existing warm, restrained visual language. They use the existing shared shell and do not add a new design system, route, API request, or dependency.
+At the time of the original fallback implementation, both states used Mantine. That implementation detail is superseded by [the shadcn/ui baseline design](2026-07-18-shadcn-ui-baseline-design.md): the current states use source-owned shadcn/ui primitives and Tailwind tokens. They still add no route, API request, or unrelated dependency; a downstream project may deliberately select Mantine, MUI, or another single UI system instead.
 
 ## Components and behavior
 
@@ -28,7 +28,7 @@ The production message stays generic. In development, the error message is shown
 
 ## Visual direction
 
-The states use a centered, compact content column with ordinary typography, clear spacing, and standard Mantine buttons. They use the existing coral primary color only for the primary action. There are no decorative illustrations, gradients, floating cards, or framework branding.
+The states use a centered, compact content column with ordinary typography, clear spacing, and standard shadcn/ui buttons. They use semantic shadcn tokens for the primary and outline actions. There are no decorative illustrations, gradients, floating cards, or framework branding.
 
 ## Testing and acceptance criteria
 
