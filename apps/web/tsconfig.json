@@ -1,31 +1,26 @@
 {
-	"extends": "@repo/typescript-config/nextjs.json",
+	"extends": "@repo/typescript-config/base.json",
 	"compilerOptions": {
-		"plugins": [
-			{
-				"name": "next"
-			}
-		],
-		"ignoreDeprecations": "5.0",
+		"baseUrl": ".",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"jsx": "react-jsx",
+		"noEmit": true,
 		"paths": {
 			"@/*": [
-				"./*"
-			],
-			"@/components/*": [
-				"./components/*"
+				"./src/*"
 			]
-		}
+		},
+		"types": ["vite/client"]
 	},
 	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		"**/*.css",
-		"next-env.d.ts",
-		"next.config.js",
-		".next/types/**/*.ts",
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"vite.config.ts",
 		"types/**/*.d.ts"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		".output"
 	]
 }
