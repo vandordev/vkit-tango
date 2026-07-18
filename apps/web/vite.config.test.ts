@@ -37,13 +37,13 @@ test("uses the YAML wrapper without a Next.js command", async () => {
   const { dependencies, devDependencies, scripts } = await Bun.file(new URL("./package.json", import.meta.url)).json();
 
   expect(scripts.dev).toContain("--env-file=../../.env");
-  expect(scripts.dev).toContain("--modules base,web,api,storage");
+  expect(scripts.dev).toContain("--modules web");
   expect(scripts.dev).toContain("vite --port 4100");
   expect(scripts.build).toContain("vite build");
   expect(scripts.start).toContain(".output/server/index.mjs");
   expect(scripts.dev).not.toContain("next");
   expect(scripts.build).not.toContain("next");
-  expect(devDependencies.prisma).toBe("^6.0.0");
+  expect(devDependencies.prisma).toBeUndefined();
   expect(dependencies.nitro).toBe("3.0.260610-beta");
 });
 

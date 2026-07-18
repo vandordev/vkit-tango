@@ -23,22 +23,19 @@ function withConfigDirectory(
   }
 }
 
-test("loads the base, api, and web configuration modules", () => {
+test("loads the shared web configuration module", () => {
   const configDirectory = new URL("../../../config", import.meta.url).pathname;
 
   expect(
     loadConfig({
       configDirectory,
-      modules: ["base", "api", "web"],
+      modules: ["web"],
       environment: {
         NODE_ENV: "test",
-        DATABASE_URL: "postgresql://db",
       },
     }),
   ).toMatchObject({
-    NODE_ENV: "test",
-    DATABASE_URL: "postgresql://db",
-    PORT: "4101",
+    web: { public: { api_base_url: "http://localhost:4101" } },
   });
 });
 

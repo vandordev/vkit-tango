@@ -1,85 +1,13 @@
 # AGENTS.md
 
-Guidelines for Codex and other coding agents working in this repository.
+Read `README.md`, the relevant `.agent` rules, and `git status --short` before editing.
 
-## Start Here
+Web memakai shadcn/ui sebagai one primary UI system; Mantine dan MUI adalah alternatif yang harus dipilih secara eksplisit.
 
-1. Read `README.md` for the public architecture and supported commands.
-2. Read the relevant files in `.agent/` before changing API, web, database, config, worker, or scheduler code.
-3. Inspect the current worktree with `git status --short`; preserve unrelated user changes.
-4. Use existing patterns and keep changes focused on the requested behavior.
-
-## Repository Shape
-
-The default application is `apps/web` + `apps/api`:
-
-- `apps/web`: TanStack Start with TanStack Router file-based routes, Eden consumers, and the embedded API adapter in `src/server.ts`.
-- `apps/api`: Elysia app factory, API routes, validation, errors, logging, and standalone Bun entrypoint.
-- `packages/database`: Prisma schema, migrations, generated client, and singleton client.
-- `packages/application`: mutation usecases and domain rules.
-- `packages/config`: typed server runtime configuration.
-- UI choice is project-scoped: shadcn/ui is the current baseline. Mantine, MUI, and other component libraries are valid alternatives when a project deliberately chooses one; they are not second baselines.
-
-`apps/worker`, `apps/scheduler`, and `packages/queue` are optional. Keep them when a project needs durable asynchronous jobs; remove or omit them, their env files, Compose services, Dockerfiles, and dependencies when it does not. Do not introduce these runtimes for synchronous features.
-
-## Architecture Rules
-
-### API and Web
-
-- `apps/api/src/app.ts` is the single Elysia app source of truth.
-- `apps/api/src/server.ts` may run that app standalone with `app.listen()`.
-- `apps/web/src/server.ts` is the thin TanStack Start server entry that forwards `/api/*` and `/health` to Elysia `app.fetch` before delegating all other requests to Start.
-- Keep application endpoints under `/api`; keep process health endpoints under `/health`.
-- TanStack Start server code may use `treaty(app).api` directly. Browser code uses Eden through same-origin `/api`.
-- Do not add tRPC, framework API proxies, rewrite-based API duplication, or ad-hoc API `fetch` calls in pages/components.
-
-### Reads and Mutations
-
-- Query routes may call Prisma directly to shape a transport-specific read model.
-- Mutation routes validate transport input, call a usecase, and map the result to the standard response envelope.
-- Usecases own business rules and Prisma transactions; they must not import Elysia or TanStack Start.
-- All business endpoints return `{ success: true, data }` or `{ success: false, error, message, requestId? }`.
-
-### Database
-
-- Only `packages/database` creates or exports the Prisma client.
-- Schema changes belong in `packages/database/prisma/schema.prisma` and require a migration.
-- Never add a product-specific model to the reusable baseline without an explicit product requirement.
-- Keep database access out of `apps/web`.
-
-### Configuration
-
-- Server apps use typed loaders from `@repo/config` and `@t3-oss/env-core`.
-- Browser-visible web values use Vite's explicit `VITE_*` prefix.
-- Do not read `process.env` in feature code. Add new keys to the smallest runtime schema that needs them.
-- Keep `.env.api`, `.env.web`, and optional `.env.worker`/`.env.scheduler` boundaries intact. Never expose `DATABASE_URL` to the browser.
-- Because Elysia is embedded in TanStack Start, `.env.web` may contain server-only `DATABASE_URL`; validate it under the server schema, never in browser-visible configuration.
-
-### UI
-
-- Read `.agent/ui.md` before changing the web design system.
-- Use one primary UI system per project. Do not mix shadcn, Mantine, MUI, or other primitive libraries as defaults.
-
-### Optional Jobs
-
-- If jobs are enabled, `apps/scheduler` only schedules/enqueues named jobs.
-- `apps/worker` consumes jobs and invokes application usecases; it owns retries, idempotency, graceful shutdown, and job logging.
-- `packages/queue` owns the PostgreSQL queue lifecycle and job contract.
-- Schedulers must not import Prisma or usecases. Workers must not contain product business rules.
-
-## Implementation Workflow
-
-1. Write a focused failing test for new or changed behavior.
-2. Implement the smallest change that makes the test pass.
-3. Keep route, usecase, config, and runtime responsibilities in their owning workspace.
-4. Update `.agent/*.md` and README when reusable architecture or commands change.
-5. Prefer `task <name>` commands from `Taskfile.yml`; use `task --list` to discover them.
-6. Before completion, run the narrow tests first, then `task quality` and `task build` when the change affects shared code or runtime wiring.
-
-## Change Boundaries
-
-- Do not rewrite unrelated files, generated output, lockfiles, or user changes.
-- Do not create a second API transport for the same resource.
-- Do not add authentication, SSO, or a sample business domain to the baseline unless explicitly requested.
-- Do not claim completion without fresh test/typecheck/build evidence.
-- Keep commits focused and use a descriptive conventional commit message when committing is requested.
+- Go owns Huma HTTP, Ent persistence, Goose migrations, River schedules/jobs, and every business mutation.
+- Active Huma routes use `/api/v1/*`; health/docs/OpenAPI are unversioned process routes.
+- Reads may use Ent in their owning HTTP handler. Writes must call `internal/usecase`; a usecase owns its Ent/SQL transaction and any River enqueue.
+- Ent schema lives in `database/schema`; generated Ent output is `internal/platform/db`; migrations use Goose.
+- TypeScript owns only TanStack Start and Socket.IO. The web client is generated from `contracts/openapi/openapi.json`; realtime is documented in `contracts/asyncapi/realtime.v1.yaml`.
+- Use the shared YAML modules under `config`; never expose database or private realtime credentials to the browser.
+- Run focused tests first, then `task quality` and `task build` for shared/runtime changes.

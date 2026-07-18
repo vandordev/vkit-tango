@@ -3,11 +3,10 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN CGO_ENABLED=0 go build -o /api ./apps/api
+RUN CGO_ENABLED=0 go build -o /migrate ./apps/migrate
 FROM alpine:3.22
 WORKDIR /app
-COPY --from=build /api /api
+COPY --from=build /migrate /migrate
 COPY config ./config
 COPY database ./database
-EXPOSE 4101
-CMD ["/api"]
+CMD ["/migrate"]

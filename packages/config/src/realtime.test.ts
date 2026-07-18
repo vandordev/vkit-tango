@@ -10,9 +10,8 @@ test("creates a scoped realtime runtime configuration", () => {
     createRealtimeConfig(
       loadConfig({
         configDirectory,
-        modules: ["base", "realtime"],
+        modules: ["realtime"],
         environment: {
-          DATABASE_URL: "postgresql://db",
           REALTIME_TICKET_SECRET: "ticket-secret",
           REALTIME_INTERNAL_API_KEY: "publisher-key",
         },
