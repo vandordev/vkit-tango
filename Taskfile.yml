@@ -45,7 +45,7 @@ tasks:
     cmds: ["rtk task api:openapi", "rtk bun run --cwd apps/web api:generate"]
   api:client:check:
     desc: Verify generated API client is current
-    cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated apps/web/src/routeTree.gen.ts"]
+    cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated"]
   add:usecase:
     cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:usecase --apply --set name={{.name}}', 'task sync:usecase']
   add:http-handler:
@@ -78,4 +78,4 @@ tasks:
     cmds: ["rtk task test", "rtk go vet ./...", "rtk task lint", "rtk task check-types", "rtk task api:client:check", "rtk ./scripts/check-generated.sh", "rtk git diff --check"]
   build:
     desc: Build all Go and retained TypeScript runtimes
-    cmds: ["rtk go build ./apps/api ./apps/worker ./apps/scheduler ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build"]
+    cmds: ["rtk go build ./apps/api ./apps/worker ./apps/scheduler ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build", "rtk git diff --exit-code -- apps/web/src/routeTree.gen.ts"]
