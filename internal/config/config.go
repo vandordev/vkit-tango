@@ -64,7 +64,9 @@ func LoadWorker(loader Loader) (Worker, error) {
 	}
 
 	database, err := object(loaded, "database")
-	if err != nil { return Worker{}, err }
+	if err != nil {
+		return Worker{}, err
+	}
 	worker, err := object(loaded, "worker")
 	if err != nil {
 		return Worker{}, err
@@ -75,9 +77,7 @@ func LoadWorker(loader Loader) (Worker, error) {
 	}
 
 	realtime, err := object(loaded, "realtime")
-	if err != nil {
-		return Worker{}, err
-	}
+	if err != nil { return Worker{}, err }
 	return Worker{Database: Database{URL: stringValue(database, "url")}, Realtime: Realtime{PublicURL: stringValue(realtime, "public_url"), InternalAPIKey: stringValue(realtime, "internal_api_key")}, MaxWorkers: maxWorkers}, nil
 }
 
