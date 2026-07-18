@@ -1,8 +1,8 @@
-# vkit-rapid
+# vkit-fast
 
 Reusable full-stack boilerplate for building multiple TypeScript applications with a consistent backend boundary, typed configuration, and production-ready runtime separation.
 
-vkit-rapid gives every new project the same foundation:
+vkit-fast gives every new project the same foundation:
 
 - TanStack Start, TanStack Router, Vite, and Nitro for the web experience
 - Elysia on Bun for the HTTP API
@@ -17,9 +17,9 @@ The repository is intentionally domain-neutral. Start with the architecture and 
 
 The web app currently uses Mantine for its theme and dashboard primitives. Projects that need source-owned Tailwind components can switch to shadcn/ui, but should choose one primary UI system rather than carrying both as competing defaults.
 
-## Why vkit-rapid?
+## Why vkit-fast?
 
-Starting a project repeatedly often means rebuilding the same boundaries: environment validation, API wiring, database access, background jobs, local commands, and deployment files. vkit-rapid packages those decisions into a reusable monorepo so a new product can focus on its domain instead of its plumbing.
+Starting a project repeatedly often means rebuilding the same boundaries: environment validation, API wiring, database access, background jobs, local commands, and deployment files. vkit-fast packages those decisions into a reusable monorepo so a new product can focus on its domain instead of its plumbing.
 
 The template is designed for teams that want:
 
@@ -85,7 +85,7 @@ The queue boundary uses `pg-boss` on PostgreSQL, so durable jobs, retries, delay
 
 ```bash
 git clone <repository-url>
-cd vkit-rapid
+cd vkit-fast
 
 task install
 cp .env.example .env
