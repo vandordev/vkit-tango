@@ -1,6 +1,8 @@
 # AGENTS.md
 
-Read `README.md`, the relevant `.agent` rules, and `git status --short` before editing.
+Read `README.md`, the relevant `.agent` rules, `.agent/repository-map.md`,
+`.agent/workflows.md`, `.agent/verification.md`, and `git status --short`
+before editing.
 
 The web uses shadcn/ui as its one primary UI system; Mantine and MUI are
 alternatives that must be selected explicitly.
