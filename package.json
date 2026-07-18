@@ -24,6 +24,8 @@
     "check-types": "turbo run check-types",
     "docker:build:web": "turbo run build --filter=web",
     "docker:build:api": "docker build -f Dockerfile.api .",
+    "check:tasks": "bun run scripts/check-task-surface.ts",
+    "check:architecture-docs": "bun run scripts/check-architecture-docs.ts",
     "clean": "turbo run clean",
     "prepare": "husky"
   },

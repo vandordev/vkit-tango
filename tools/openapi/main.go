@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,10 +9,17 @@ import (
 	"path/filepath"
 
 	transport "github.com/vandordev/vkit-fast/internal/transport/http"
+	"github.com/vandordev/vkit-fast/internal/usecase"
 )
 
+type openAPIMetadataSetter struct{}
+
+func (openAPIMetadataSetter) Execute(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
+	return usecase.SetSystemMetadataResult{}, nil
+}
+
 func main() {
-	handler := transport.NewHandler(func() error { return nil })
+	handler := transport.NewHandler(func() error { return nil }, openAPIMetadataSetter{})
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/openapi.json", nil))
 	if response.Code != http.StatusOK {

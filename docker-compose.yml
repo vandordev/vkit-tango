@@ -13,10 +13,21 @@ services:
     build: { context: ., dockerfile: Dockerfile.api }
     environment: { DATABASE_URL: postgresql://boilerplate:boilerplate@db:5432/boilerplate, REALTIME_TICKET_SECRET: local-ticket-secret, REALTIME_INTERNAL_API_KEY: local-internal-key }
     ports: ["4101:4101"]
+    healthcheck: { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4101/health/ready >/dev/null"], interval: 5s, timeout: 3s, retries: 10 }
     depends_on: { migrate: { condition: service_completed_successfully } }
+  web:
+    build: { context: ., dockerfile: Dockerfile.web }
+    environment: { NODE_ENV: production }
+    ports: ["4100:4100"]
+    depends_on: { api: { condition: service_healthy } }
   worker:
     profiles: [jobs]
     build: { context: ., dockerfile: Dockerfile.worker }
-    environment: { DATABASE_URL: postgresql://boilerplate:boilerplate@db:5432/boilerplate, REALTIME_TICKET_SECRET: local-ticket-secret, REALTIME_INTERNAL_API_KEY: local-internal-key }
+    environment: { DATABASE_URL: postgresql://boilerplate:boilerplate@db:5432/boilerplate, REALTIME_PUBLIC_URL: http://realtime:4102, REALTIME_TICKET_SECRET: local-ticket-secret, REALTIME_INTERNAL_API_KEY: local-internal-key }
     depends_on: { migrate: { condition: service_completed_successfully } }
+  realtime:
+    profiles: [realtime]
+    build: { context: ., dockerfile: Dockerfile.realtime }
+    environment: { REALTIME_TICKET_SECRET: local-ticket-secret, REALTIME_INTERNAL_API_KEY: local-internal-key }
+    ports: ["4102:4102"]
 volumes: { postgres-data: {} }

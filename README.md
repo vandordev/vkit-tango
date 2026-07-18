@@ -15,7 +15,7 @@ UI web memakai shadcn/ui sebagai one primary UI system; Mantine atau MUI hanya d
 - `internal/usecase`: satu sumber aturan mutasi bisnis. Handler query boleh memakai Ent langsung; mutasi wajib lewat usecase.
 - `apps/realtime` dan `packages/realtime`: Socket.IO TypeScript. Go mempublikasikan event melalui endpoint privat `/internal/events`; kontraknya ada di `contracts/asyncapi/realtime.v1.yaml`.
 
-PostgreSQL adalah satu-satunya queue backend. Mutasi Ent dan enqueue River harus berbagi transaksi SQL yang sama. Tidak ada Redis, Prisma, Elysia, Eden, pg-boss, atau scheduler TypeScript.
+PostgreSQL adalah satu-satunya queue backend. Mutasi Ent dan enqueue River harus berbagi transaksi SQL yang sama.
 
 ## Configuration
 

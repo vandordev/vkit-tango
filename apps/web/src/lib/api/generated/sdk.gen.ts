@@ -12,6 +12,9 @@ import type {
   V1GetSystemStatusData,
   V1GetSystemStatusErrors,
   V1GetSystemStatusResponses,
+  V1SetSystemMetadataData,
+  V1SetSystemMetadataErrors,
+  V1SetSystemMetadataResponses,
 } from "./types.gen";
 
 export type Options<
@@ -47,3 +50,26 @@ export const v1GetSystemStatus = <ThrowOnError extends boolean = false>(
     V1GetSystemStatusErrors,
     ThrowOnError
   >({ url: "/api/v1/status", ...options });
+
+/**
+ * Set system metadata
+ */
+export const v1SetSystemMetadata = <ThrowOnError extends boolean = false>(
+  options: Options<V1SetSystemMetadataData, ThrowOnError>,
+): RequestResult<
+  V1SetSystemMetadataResponses,
+  V1SetSystemMetadataErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).put<
+    V1SetSystemMetadataResponses,
+    V1SetSystemMetadataErrors,
+    ThrowOnError
+  >({
+    url: "/api/v1/system-metadata/{key}",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });

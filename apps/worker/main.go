@@ -13,6 +13,7 @@ import (
 	"github.com/vandordev/vkit-fast/internal/platform/postgres"
 	platformrealtime "github.com/vandordev/vkit-fast/internal/platform/realtime"
 	platformriver "github.com/vandordev/vkit-fast/internal/platform/river"
+	"github.com/vandordev/vkit-fast/internal/usecase"
 	workerriver "github.com/vandordev/vkit-fast/internal/worker/river"
 )
 
@@ -31,7 +32,12 @@ func main() {
 	defer client.Close()
 
 	publisher := platformrealtime.HTTPPublisher{BaseURL: loaded.Realtime.PublicURL, APIKey: loaded.Realtime.InternalAPIKey}
-	riverClient, err := platformriver.NewClient(database, workerriver.NewWorkers(publisher))
+	metadata := usecase.SystemMetadataService{Client: client}
+	workers, err := workerriver.RegisterWorkers(publisher, metadata)
+	if err != nil {
+		log.Fatal(err)
+	}
+	riverClient, err := platformriver.NewClient(database, workers, loaded.MaxWorkers, workerriver.RegisterPeriodicJobs())
 	if err != nil {
 		log.Fatal(err)
 	}

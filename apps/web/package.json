@@ -5,9 +5,9 @@
   "packageManager": "bun@1.3.14",
   "private": true,
   "scripts": {
-    "dev": "bun --env-file=../../.env run ../../packages/config/src/run.ts --modules web -- bun run vite --port 4100",
-    "build": "NODE_ENV=production bun --env-file=../../.env run ../../packages/config/src/run.ts --modules web -- bun run vite build",
-    "start": "bun --env-file=../../.env run ../../packages/config/src/run.ts --modules web -- bun .output/server/index.mjs",
+    "dev": "bun --env-file=../../.env run ../../packages/config/src/run.ts --modules app,web -- bun run vite --port 4100",
+    "build": "NODE_ENV=production bun --env-file=../../.env run ../../packages/config/src/run.ts --modules app,web -- bun run vite build",
+    "start": "bun --env-file=../../.env run ../../packages/config/src/run.ts --modules app,web -- bun .output/server/index.mjs",
     "api:generate": "openapi-ts",
     "lint": "eslint",
     "check-types": "tsc --noEmit",

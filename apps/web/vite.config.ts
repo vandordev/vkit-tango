@@ -27,8 +27,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": "http://localhost:4101",
-      "/health": "http://localhost:4101",
+      "/api": { target: "http://localhost:4101", changeOrigin: true },
+      "/health": { target: "http://localhost:4101", changeOrigin: true },
     },
   },
 });

@@ -24,12 +24,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := run(ctx, loaded.Database.URL, "database/migrations"); err != nil {
+	command := "up"
+	if len(os.Args) == 2 {
+		command = os.Args[1]
+	}
+	if err := run(ctx, loaded.Database.URL, "database/migrations", command); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run(ctx context.Context, databaseURL, migrationsDirectory string) error {
+func run(ctx context.Context, databaseURL, migrationsDirectory, command string) error {
+	if command != "up" && command != "status" {
+		return fmt.Errorf("unsupported migration command %q", command)
+	}
 	database, client, err := postgres.Open(ctx, databaseURL)
 	if err != nil {
 		return err
@@ -38,6 +45,9 @@ func run(ctx context.Context, databaseURL, migrationsDirectory string) error {
 
 	if err := goose.SetDialect("postgres"); err != nil {
 		return fmt.Errorf("set goose dialect: %w", err)
+	}
+	if command == "status" {
+		return goose.StatusContext(ctx, database, migrationsDirectory)
 	}
 	if err := goose.UpContext(ctx, database, migrationsDirectory); err != nil {
 		return fmt.Errorf("apply goose migrations: %w", err)

@@ -9,6 +9,7 @@ import (
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humago"
 	"github.com/vandordev/vkit-fast/internal/transport/http/method"
+	"github.com/vandordev/vkit-fast/internal/usecase"
 )
 
 type statusResponse struct {
@@ -22,7 +23,23 @@ type statusOutput struct {
 	Body statusResponse
 }
 
-func NewHandler(ready func() error) http.Handler {
+type setSystemMetadataInput struct {
+	Key  string `path:"key" minLength:"1"`
+	Body struct {
+		Value map[string]any `json:"value"`
+	}
+}
+
+type setSystemMetadataOutput struct {
+	Body struct {
+		Success bool `json:"success"`
+		Data    struct {
+			Key string `json:"key"`
+		} `json:"data"`
+	}
+}
+
+func NewHandler(ready func() error, mutations ...usecase.SetSystemMetadata) http.Handler {
 	mux := http.NewServeMux()
 	config := huma.DefaultConfig("vkit-fast API", "1.0.0")
 	config.CreateHooks = nil
@@ -45,6 +62,22 @@ func NewHandler(ready func() error) http.Handler {
 		response.Data.Status = "ok"
 		return &statusOutput{Body: response}, nil
 	})
+	if len(mutations) == 1 && mutations[0] != nil {
+		metadataPath, err := v1.Path("/system-metadata/{key}")
+		if err != nil {
+			panic(err)
+		}
+		huma.Register(api, huma.Operation{OperationID: "v1_set_system_metadata", Method: http.MethodPut, Path: metadataPath, Summary: "Set system metadata"}, func(ctx context.Context, input *setSystemMetadataInput) (*setSystemMetadataOutput, error) {
+			result, err := mutations[0].Execute(ctx, usecase.SetSystemMetadataInput{Key: input.Key, Value: input.Body.Value})
+			if err != nil {
+				return nil, err
+			}
+			output := &setSystemMetadataOutput{}
+			output.Body.Success = true
+			output.Body.Data.Key = result.Key
+			return output, nil
+		})
+	}
 
 	mux.HandleFunc("GET /health", func(writer http.ResponseWriter, request *http.Request) {
 		writeJSON(writer, http.StatusOK, map[string]any{

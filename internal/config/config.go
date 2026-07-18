@@ -58,7 +58,7 @@ func LoadMigrate(loader Loader) (Migrate, error) {
 }
 
 func LoadWorker(loader Loader) (Worker, error) {
-	loaded, err := loader.Load("database", "worker", "realtime")
+	loaded, err := loader.Load("app", "database", "worker", "realtime", "observability")
 	if err != nil {
 		return Worker{}, err
 	}

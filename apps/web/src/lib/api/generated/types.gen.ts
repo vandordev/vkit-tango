@@ -4,6 +4,10 @@ export type ClientOptions = {
   baseUrl: `${string}://${string}` | (string & {});
 };
 
+export type DataStruct = {
+  key: string;
+};
+
 export type ErrorDetail = {
   /**
    * Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
@@ -46,6 +50,17 @@ export type ErrorModel = {
   type?: string;
 };
 
+export type SetSystemMetadataInputBody = {
+  value: {
+    [key: string]: unknown;
+  };
+};
+
+export type SetSystemMetadataOutputBody = {
+  data: DataStruct;
+  success: boolean;
+};
+
 export type StatusResponse = {
   data: StatusResponseDataStruct;
   success: boolean;
@@ -81,3 +96,32 @@ export type V1GetSystemStatusResponses = {
 
 export type V1GetSystemStatusResponse =
   V1GetSystemStatusResponses[keyof V1GetSystemStatusResponses];
+
+export type V1SetSystemMetadataData = {
+  body: SetSystemMetadataInputBody;
+  path: {
+    key: string;
+  };
+  query?: never;
+  url: "/api/v1/system-metadata/{key}";
+};
+
+export type V1SetSystemMetadataErrors = {
+  /**
+   * Error
+   */
+  default: ErrorModel;
+};
+
+export type V1SetSystemMetadataError =
+  V1SetSystemMetadataErrors[keyof V1SetSystemMetadataErrors];
+
+export type V1SetSystemMetadataResponses = {
+  /**
+   * OK
+   */
+  200: SetSystemMetadataOutputBody;
+};
+
+export type V1SetSystemMetadataResponse =
+  V1SetSystemMetadataResponses[keyof V1SetSystemMetadataResponses];

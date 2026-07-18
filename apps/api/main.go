@@ -15,6 +15,7 @@ import (
 	"github.com/vandordev/vkit-fast/internal/config"
 	"github.com/vandordev/vkit-fast/internal/platform/postgres"
 	transport "github.com/vandordev/vkit-fast/internal/transport/http"
+	"github.com/vandordev/vkit-fast/internal/usecase"
 )
 
 func main() {
@@ -31,9 +32,10 @@ func main() {
 	}
 	defer client.Close()
 
+	metadata := usecase.SystemMetadataService{Client: client}
 	server := newServer(fmt.Sprintf("%s:%d", loaded.HTTPAPI.Host, loaded.HTTPAPI.Port), transport.NewHandler(func() error {
 		return database.PingContext(context.Background())
-	}))
+	}, metadata))
 	go func() {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Printf("api server error: %v", err)

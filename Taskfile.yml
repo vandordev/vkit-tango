@@ -2,32 +2,59 @@ version: "3"
 
 tasks:
   default:
+    desc: Show available commands
     cmds: ["rtk task --list"]
   install:
+    desc: Install Bun workspace dependencies
     cmds: ["rtk bun install --ignore-scripts"]
   dev:api:
+    desc: Run the Go Huma API
     cmds: ["rtk go run ./apps/api"]
   dev:worker:
+    desc: Run the Go River worker
     cmds: ["rtk go run ./apps/worker"]
   dev:web:
+    desc: Run the TanStack Start web app
     cmds: ["rtk bun run dev:web"]
   dev:realtime:
+    desc: Run the Socket.IO runtime
     cmds: ["rtk bun run dev:realtime"]
   migrate:
+    desc: Apply Goose and River migrations
     cmds: ["rtk go run ./apps/migrate"]
+  dev:migrate:
+    desc: Run database migrations locally
+    cmds: ["rtk go run ./apps/migrate"]
+  db:generate:
+    desc: Generate Ent client code
+    cmds: ["rtk go generate ./database/schema"]
+  db:migrate:
+    desc: Apply Goose and River migrations
+    cmds: ["rtk go run ./apps/migrate"]
+  db:migrate:status:
+    desc: Show Goose migration status
+    cmds: ["rtk go run ./apps/migrate status"]
   api:openapi:
+    desc: Export Huma OpenAPI document
     cmds: ["rtk go run ./tools/openapi"]
   api:client:generate:
+    desc: Generate TypeScript SDK and TanStack Query support
     cmds: ["rtk task api:openapi", "rtk bun run --cwd apps/web api:generate"]
   api:client:check:
+    desc: Verify generated API client is current
     cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated"]
   test:
-    cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime"]
+    desc: Run Go and retained TypeScript tests
+    cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs"]
   lint:
+    desc: Lint retained TypeScript workspaces
     cmds: ["rtk bun run --cwd apps/web lint", "rtk bun run --cwd apps/realtime lint", "rtk bun run --cwd packages/config lint", "rtk bun run --cwd packages/realtime lint"]
   check-types:
+    desc: Typecheck retained TypeScript workspaces
     cmds: ["rtk bun run --cwd apps/web check-types", "rtk bun run --cwd apps/realtime check-types", "rtk bun run --cwd packages/config check-types", "rtk bun run --cwd packages/realtime check-types"]
   quality:
-    cmds: ["rtk task test", "rtk task lint", "rtk task check-types", "rtk task api:client:check"]
+    desc: Run tests, lint, typechecks, and API generation check
+    cmds: ["rtk task test", "rtk go vet ./...", "rtk task lint", "rtk task check-types", "rtk task api:client:check", "rtk git diff --check"]
   build:
+    desc: Build all Go and retained TypeScript runtimes
     cmds: ["rtk go build ./apps/api ./apps/worker ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build"]

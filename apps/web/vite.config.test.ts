@@ -37,7 +37,7 @@ test("uses the YAML wrapper without a Next.js command", async () => {
   const { dependencies, devDependencies, scripts } = await Bun.file(new URL("./package.json", import.meta.url)).json();
 
   expect(scripts.dev).toContain("--env-file=../../.env");
-  expect(scripts.dev).toContain("--modules web");
+  expect(scripts.dev).toContain("--modules app,web");
   expect(scripts.dev).toContain("vite --port 4100");
   expect(scripts.build).toContain("vite build");
   expect(scripts.start).toContain(".output/server/index.mjs");
@@ -45,6 +45,13 @@ test("uses the YAML wrapper without a Next.js command", async () => {
   expect(scripts.build).not.toContain("next");
   expect(devDependencies.prisma).toBeUndefined();
   expect(dependencies.nitro).toBe("3.0.260610-beta");
+});
+
+test("proxies API and health requests to Go in development", async () => {
+  const viteConfig = await Bun.file(new URL("./vite.config.ts", import.meta.url)).text();
+
+  expect(viteConfig).toContain('"/api": { target: "http://localhost:4101", changeOrigin: true }');
+  expect(viteConfig).toContain('"/health": { target: "http://localhost:4101", changeOrigin: true }');
 });
 
 test("excludes generated Vite and Nitro output from linting", async () => {
