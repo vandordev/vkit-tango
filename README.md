@@ -1,4 +1,4 @@
-# vkit-fast
+# vkit-tango
 
 Monorepo data-driven untuk TanStack Start, Go, PostgreSQL, dan Socket.IO.
 

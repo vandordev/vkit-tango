@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
 )
 
 // SystemMetadata is the model entity for the SystemMetadata schema.

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/vandordev/vkit-fast/internal/platform/postgres"
+	"github.com/vandordev/vkit-tango/internal/platform/postgres"
 )
 
 func TestOpenRejectsInvalidDatabaseURL(t *testing.T) {

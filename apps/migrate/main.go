@@ -12,8 +12,8 @@ import (
 	"github.com/pressly/goose/v3"
 	"github.com/riverqueue/river/riverdriver/riverdatabasesql"
 	"github.com/riverqueue/river/rivermigrate"
-	"github.com/vandordev/vkit-fast/internal/config"
-	"github.com/vandordev/vkit-fast/internal/platform/postgres"
+	"github.com/vandordev/vkit-tango/internal/config"
+	"github.com/vandordev/vkit-tango/internal/platform/postgres"
 )
 
 func main() {

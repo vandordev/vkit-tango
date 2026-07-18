@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
 )
 
 // ent aliases to avoid import conflicts in user's code.

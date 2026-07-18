@@ -3,7 +3,7 @@ package method_test
 import (
 	"testing"
 
-	"github.com/vandordev/vkit-fast/internal/transport/http/method"
+	"github.com/vandordev/vkit-tango/internal/transport/http/method"
 )
 
 func TestV1PathBuildsVersionedRoute(t *testing.T) {

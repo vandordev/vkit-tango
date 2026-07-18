@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/vandordev/vkit-fast/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
 )
 
 // The SystemMetadataFunc type is an adapter to allow the use of ordinary

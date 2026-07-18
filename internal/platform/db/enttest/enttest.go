@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/vandordev/vkit-fast/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
 	// required by schema hooks.
-	_ "github.com/vandordev/vkit-fast/internal/platform/db/runtime"
+	_ "github.com/vandordev/vkit-tango/internal/platform/db/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/vandordev/vkit-fast/internal/platform/db/migrate"
+	"github.com/vandordev/vkit-tango/internal/platform/db/migrate"
 )
 
 type (

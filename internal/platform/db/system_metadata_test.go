@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
 )
 
 var _ uuid.UUID = db.SystemMetadata{}.ID

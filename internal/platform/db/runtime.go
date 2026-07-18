@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/database/schema"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/database/schema"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
 )
 
 // The init function reads all schema descriptors with runtime code

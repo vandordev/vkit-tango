@@ -4,7 +4,7 @@ import (
 	"context"
 
 	riverqueue "github.com/riverqueue/river"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type SetSystemMetadataArgs struct {

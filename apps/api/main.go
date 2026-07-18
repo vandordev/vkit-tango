@@ -12,11 +12,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vandordev/vkit-fast/internal/config"
-	"github.com/vandordev/vkit-fast/internal/platform/postgres"
-	platformriver "github.com/vandordev/vkit-fast/internal/platform/river"
-	transport "github.com/vandordev/vkit-fast/internal/transport/http"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	"github.com/vandordev/vkit-tango/internal/config"
+	"github.com/vandordev/vkit-tango/internal/platform/postgres"
+	platformriver "github.com/vandordev/vkit-tango/internal/platform/river"
+	transport "github.com/vandordev/vkit-tango/internal/transport/http"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 func main() {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	transport "github.com/vandordev/vkit-fast/internal/transport/http"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	transport "github.com/vandordev/vkit-tango/internal/transport/http"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type metadataSetter func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error)

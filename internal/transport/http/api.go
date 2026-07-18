@@ -8,8 +8,8 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"github.com/danielgtaylor/huma/v2/adapters/humago"
-	"github.com/vandordev/vkit-fast/internal/transport/http/method"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	"github.com/vandordev/vkit-tango/internal/transport/http/method"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type statusResponse struct {
@@ -41,7 +41,7 @@ type setSystemMetadataOutput struct {
 
 func NewHandler(ready func() error, mutations ...usecase.SetSystemMetadata) http.Handler {
 	mux := http.NewServeMux()
-	config := huma.DefaultConfig("vkit-fast API", "1.0.0")
+	config := huma.DefaultConfig("vkit-tango API", "1.0.0")
 	config.CreateHooks = nil
 	config.OpenAPIPath = "/api/openapi"
 	config.DocsPath = "/api/docs"

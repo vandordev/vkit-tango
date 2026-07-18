@@ -7,7 +7,7 @@ import (
 
 	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/vandordev/vkit-fast/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
 )
 
 func Open(ctx context.Context, databaseURL string) (*sql.DB, *db.Client, error) {

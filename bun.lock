@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "turbostack",
+      "name": "vkit-tango",
       "devDependencies": {
         "husky": "^9.1.7",
         "prettier": "^3.7.4",

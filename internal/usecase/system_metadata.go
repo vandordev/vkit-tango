@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/internal/platform/db"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
-	platformrealtime "github.com/vandordev/vkit-fast/internal/platform/realtime"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
+	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
 )
 
 type SetSystemMetadataInput struct {

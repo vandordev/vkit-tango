@@ -10,12 +10,12 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/internal/platform/db/migrate"
+	"github.com/vandordev/vkit-tango/internal/platform/db/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
 )
 
 // Client is the client that holds all ent builders.

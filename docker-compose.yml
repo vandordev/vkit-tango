@@ -1,4 +1,4 @@
-name: vkit-fast
+name: vkit-tango
 services:
   db:
     image: postgres:16-alpine

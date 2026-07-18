@@ -7,7 +7,7 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	riverqueue "github.com/riverqueue/river"
-	"github.com/vandordev/vkit-fast/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
 )
 
 type Transaction struct {

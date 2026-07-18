@@ -1,4 +1,4 @@
-module github.com/vandordev/vkit-fast
+module github.com/vandordev/vkit-tango
 
 go 1.25.7
 

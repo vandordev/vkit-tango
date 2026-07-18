@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	riverqueue "github.com/riverqueue/river"
-	platformrealtime "github.com/vandordev/vkit-fast/internal/platform/realtime"
+	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
 )
 
 type publisherFunc func(context.Context, platformrealtime.Event) error

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/vandordev/vkit-fast/internal/bootstrap"
+	"github.com/vandordev/vkit-tango/internal/bootstrap"
 )
 
 func TestNewRejectsNilDatabase(t *testing.T) {

@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/vandordev/vkit-fast/internal/platform/db/predicate"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/internal/platform/db/predicate"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
 )
 
 // SystemMetadataQuery is the builder for querying SystemMetadata entities.

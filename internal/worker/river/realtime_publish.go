@@ -4,8 +4,8 @@ import (
 	"context"
 
 	riverqueue "github.com/riverqueue/river"
-	platformrealtime "github.com/vandordev/vkit-fast/internal/platform/realtime"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type RealtimePublishArgs = platformrealtime.PublishArgs

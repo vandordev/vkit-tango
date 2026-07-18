@@ -8,8 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
-	transport "github.com/vandordev/vkit-fast/internal/transport/http"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	transport "github.com/vandordev/vkit-tango/internal/transport/http"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type openAPIMetadataSetter struct{}

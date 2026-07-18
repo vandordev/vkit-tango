@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/vandordev/vkit-fast/internal/platform/db/runtime.go
+// The schema-stitching logic is generated in github.com/vandordev/vkit-tango/internal/platform/db/runtime.go
 
 const (
 	Version = "v0.14.6"                                         // Version of ent codegen.

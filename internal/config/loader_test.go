@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/vandordev/vkit-fast/internal/config"
+	"github.com/vandordev/vkit-tango/internal/config"
 )
 
 func TestLoaderResolvesRequiredAndDefaultValues(t *testing.T) {

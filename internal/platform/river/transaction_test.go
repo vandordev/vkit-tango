@@ -15,9 +15,9 @@ import (
 	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/riverdriver/riverdatabasesql"
 	"github.com/riverqueue/river/rivermigrate"
-	"github.com/vandordev/vkit-fast/internal/platform/db"
-	"github.com/vandordev/vkit-fast/internal/platform/db/systemmetadata"
-	"github.com/vandordev/vkit-fast/internal/platform/postgres"
+	"github.com/vandordev/vkit-tango/internal/platform/db"
+	"github.com/vandordev/vkit-tango/internal/platform/db/systemmetadata"
+	"github.com/vandordev/vkit-tango/internal/platform/postgres"
 )
 
 type transactionProbeArgs struct{}

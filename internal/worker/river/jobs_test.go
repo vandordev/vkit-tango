@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	riverqueue "github.com/riverqueue/river"
-	platformrealtime "github.com/vandordev/vkit-fast/internal/platform/realtime"
-	"github.com/vandordev/vkit-fast/internal/usecase"
+	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
+	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 func TestRegisterWorkersInstallsRealtimePublisher(t *testing.T) {
