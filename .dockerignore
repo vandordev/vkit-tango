@@ -2,7 +2,8 @@
 node_modules
 **/node_modules
 .turbo
-**/.next
+**/.output
+**/.vite
 **/dist
 coverage
 .env*

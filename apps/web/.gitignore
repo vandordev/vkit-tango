@@ -8,8 +8,9 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# build output
+/.output/
+/.vite/
 /out/
 
 # production
@@ -32,4 +33,3 @@ npm-debug.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts

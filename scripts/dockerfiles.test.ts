@@ -30,7 +30,8 @@ test("Dockerfile.web runs the Bun-targeted TanStack Start output", () => {
 	expect(dockerfile).toContain("RUN apps/web/node_modules/.bin/prisma generate --schema=packages/database/prisma/schema.prisma");
 	expect(dockerfile).toContain("RUN mkdir -p /runtime/config-node-modules && cp -LR packages/config/node_modules/. /runtime/config-node-modules/");
 	expect(dockerfile).toContain("RUN rm -rf ./packages/config/node_modules");
-	expect(dockerfile).toContain("COPY --from=builder --chown=nextjs:nodejs /runtime/config-node-modules ./packages/config/node_modules");
+	expect(dockerfile).toContain("COPY --from=builder --chown=app:app /runtime/config-node-modules ./packages/config/node_modules");
 	expect(dockerfile).not.toContain(".next");
 	expect(dockerfile).not.toContain("next start");
+	expect(dockerfile).not.toContain("nextjs");
 });

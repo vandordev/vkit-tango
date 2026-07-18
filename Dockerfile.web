@@ -28,12 +28,12 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4100
 ENV HOSTNAME=0.0.0.0
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.output ./.output
-COPY --from=builder --chown=nextjs:nodejs /app/packages/config ./packages/config
+RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 --ingroup app app
+COPY --from=builder --chown=app:app /app/apps/web/.output ./.output
+COPY --from=builder --chown=app:app /app/packages/config ./packages/config
 RUN rm -rf ./packages/config/node_modules
-COPY --from=builder --chown=nextjs:nodejs /runtime/config-node-modules ./packages/config/node_modules
-COPY --from=builder --chown=nextjs:nodejs /app/config ./config
-USER nextjs
+COPY --from=builder --chown=app:app /runtime/config-node-modules ./packages/config/node_modules
+COPY --from=builder --chown=app:app /app/config ./config
+USER app
 EXPOSE 4100
 CMD ["bun", "run", "packages/config/src/run.ts", "--modules", "base,web,api,storage", "--", "bun", ".output/server/index.mjs"]
