@@ -33,6 +33,9 @@ dist
 tmp/
 coverage.out
 
+# TanStack Start generated route tree
+apps/web/src/routeTree.gen.ts
+
 
 # Opencode
 opencode.jsonc
