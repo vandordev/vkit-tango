@@ -12,17 +12,17 @@ tasks:
       - rtk bun install --ignore-scripts
 
   dev:
-    desc: Run the web app with embedded Elysia
+    desc: Run the web app
     cmds:
       - rtk bun run dev
 
   dev:standalone-api:
-    desc: Run the standalone API process
+    desc: Run the Go API process
     cmds:
       - rtk bun run dev:standalone-api
 
   dev:jobs:
-    desc: Run the optional worker and scheduler
+    desc: Run the Go worker
     cmds:
       - rtk bun run dev:jobs
 
@@ -52,12 +52,12 @@ tasks:
       - rtk bun run dev:realtime
 
   start:
-    desc: Start the web app with embedded Elysia
+    desc: Start the web app
     cmds:
       - rtk bun run start
 
   start:jobs:
-    desc: Start the optional worker and scheduler
+    desc: Start the Go worker
     cmds:
       - rtk bun run start:jobs
 
@@ -212,6 +212,23 @@ tasks:
     desc: Test the database package
     cmds:
       - rtk bun test packages/database
+
+  api:openapi:
+    desc: Generate the OpenAPI contract from the Go Huma API
+    cmds:
+      - rtk go run ./tools/openapi
+
+  api:client:generate:
+    desc: Generate the TypeScript API client and TanStack Query hooks
+    cmds:
+      - task: api:openapi
+      - rtk bun run --cwd apps/web api:generate
+
+  api:client:check:
+    desc: Verify generated API artifacts are current
+    cmds:
+      - task: api:client:generate
+      - rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated
 
   clean:
     desc: Clean all generated build artifacts

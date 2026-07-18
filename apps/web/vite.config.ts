@@ -23,6 +23,12 @@ export default defineConfig({
     },
   },
   ssr: {
-    noExternal: ["@repo/api", "@repo/config", "@repo/database", "@repo/storage"],
+    noExternal: ["@repo/config"],
+  },
+  server: {
+    proxy: {
+      "/api": "http://localhost:4101",
+      "/health": "http://localhost:4101",
+    },
   },
 });

@@ -1,8 +1,3 @@
-import { treaty } from "@elysia/eden";
-import { app } from "@repo/api";
+import { createApiClient } from "./client";
 
-import type { App } from "@repo/api";
-
-type ServerApi = ReturnType<typeof treaty<App>>["api"];
-
-export const api: ServerApi = treaty<App>(app).api;
+export const api = createApiClient(process.env.API_BASE_URL ?? "http://localhost:4101");
