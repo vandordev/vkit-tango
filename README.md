@@ -1,5 +1,9 @@
 # vkit-tango
 
+**Tango** adalah singkatan dari **TanStack Start + Go**—sebuah monorepo untuk
+web, API, worker, migrasi, dan realtime dengan PostgreSQL sebagai fondasi
+bersama.
+
 Monorepo data-driven untuk TanStack Start, Go, PostgreSQL, dan Socket.IO.
 
 UI web memakai shadcn/ui sebagai one primary UI system; Mantine atau MUI hanya dipilih secara sengaja per proyek.
