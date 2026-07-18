@@ -147,6 +147,9 @@ func writeRegistry(root, module string, item surface, constructors []string) err
 			b.WriteString("\tfx.Provide(" + pkg + "." + constructor + "),\n")
 		}
 	}
+	if item.name == "http" {
+		b.WriteString("\tfx.Invoke(func(handler *system_metadata.SetSystemMetadataHandler) { handler.RegisterRoutes() }),\n")
+	}
 	b.WriteString(")\n")
 	formatted, err := format.Source([]byte(b.String()))
 	if err != nil {

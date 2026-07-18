@@ -9,4 +9,5 @@ import (
 
 var HttpModule = fx.Options(
 	fx.Provide(system_metadata.NewSetSystemMetadataHandler),
+	fx.Invoke(func(handler *system_metadata.SetSystemMetadataHandler) { handler.RegisterRoutes() }),
 )
