@@ -14,6 +14,7 @@ import (
 
 	"github.com/vandordev/vkit-fast/internal/config"
 	"github.com/vandordev/vkit-fast/internal/platform/postgres"
+	platformriver "github.com/vandordev/vkit-fast/internal/platform/river"
 	transport "github.com/vandordev/vkit-fast/internal/transport/http"
 	"github.com/vandordev/vkit-fast/internal/usecase"
 )
@@ -32,7 +33,11 @@ func main() {
 	}
 	defer client.Close()
 
-	metadata := usecase.SystemMetadataService{Client: client}
+	producer, err := platformriver.NewProducer(database)
+	if err != nil {
+		log.Fatal(err)
+	}
+	metadata := usecase.SystemMetadataService{Runner: usecase.Runner{Database: database, River: producer}}
 	server := newServer(fmt.Sprintf("%s:%d", loaded.HTTPAPI.Host, loaded.HTTPAPI.Port), transport.NewHandler(func() error {
 		return database.PingContext(context.Background())
 	}, metadata))

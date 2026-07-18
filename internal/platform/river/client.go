@@ -16,3 +16,7 @@ func NewClient(database *sql.DB, workers *riverqueue.Workers, maxWorkers int, pe
 		},
 	})
 }
+
+func NewProducer(database *sql.DB) (*riverqueue.Client[*sql.Tx], error) {
+	return riverqueue.NewClient(riverdatabasesql.New(database), &riverqueue.Config{})
+}

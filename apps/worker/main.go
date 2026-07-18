@@ -32,7 +32,11 @@ func main() {
 	defer client.Close()
 
 	publisher := platformrealtime.HTTPPublisher{BaseURL: loaded.Realtime.PublicURL, APIKey: loaded.Realtime.InternalAPIKey}
-	metadata := usecase.SystemMetadataService{Client: client}
+	producer, err := platformriver.NewProducer(database)
+	if err != nil {
+		log.Fatal(err)
+	}
+	metadata := usecase.SystemMetadataService{Runner: usecase.Runner{Database: database, River: producer}}
 	workers, err := workerriver.RegisterWorkers(publisher, metadata)
 	if err != nil {
 		log.Fatal(err)

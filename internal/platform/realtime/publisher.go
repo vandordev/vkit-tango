@@ -12,6 +12,12 @@ import (
 
 const ResourceUpdatedV1 = "resource.updated.v1"
 
+type PublishArgs struct {
+	Event Event `json:"event"`
+}
+
+func (PublishArgs) Kind() string { return "realtime.publish.v1" }
+
 type Event struct {
 	Type        string `json:"type"`
 	EventID     string `json:"event_id"`

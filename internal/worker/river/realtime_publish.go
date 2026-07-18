@@ -8,18 +8,14 @@ import (
 	"github.com/vandordev/vkit-fast/internal/usecase"
 )
 
-type RealtimePublishArgs struct {
-	Event platformrealtime.Event `json:"event"`
-}
-
-func (RealtimePublishArgs) Kind() string { return "realtime.publish.v1" }
+type RealtimePublishArgs = platformrealtime.PublishArgs
 
 type RealtimePublishWorker struct {
-	riverqueue.WorkerDefaults[RealtimePublishArgs]
+	riverqueue.WorkerDefaults[platformrealtime.PublishArgs]
 	Publisher platformrealtime.Publisher
 }
 
-func (worker RealtimePublishWorker) Work(ctx context.Context, job *riverqueue.Job[RealtimePublishArgs]) error {
+func (worker RealtimePublishWorker) Work(ctx context.Context, job *riverqueue.Job[platformrealtime.PublishArgs]) error {
 	return worker.Publisher.Publish(ctx, job.Args.Event)
 }
 
