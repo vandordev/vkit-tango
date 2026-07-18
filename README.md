@@ -45,6 +45,8 @@ through environment interpolation.
 task install
 cp .env.example .env
 task migrate
+task dev
+task dev -- api web realtime
 task dev:api
 task dev:worker
 task dev:scheduler
@@ -54,6 +56,11 @@ task api:client:generate
 task quality
 task build
 ```
+
+`task dev` runs API, worker, scheduler, and web together. Select services with
+arguments after `--`, for example `task dev -- api web realtime`; realtime is
+not part of the default set. Run `task migrate` separately before starting the
+long-lived services.
 
 Generate Go surfaces only through Taskfile: `task add:usecase name=...`,
 `task add:http-handler name=... method=PUT path=/api/v1/...`, `task add:job

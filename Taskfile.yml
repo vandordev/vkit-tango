@@ -7,6 +7,15 @@ tasks:
   install:
     desc: Install Bun workspace dependencies
     cmds: ["rtk bun install --ignore-scripts"]
+  dev:
+    desc: Run default services, or selected services after -- (api worker scheduler web realtime)
+    cmds:
+      - |
+        {{if .CLI_ARGS}}
+        {{range .CLI_ARGS_LIST}}case "{{.}}" in api|worker|scheduler|web|realtime) ;; *) echo "unsupported dev service: {{.}}" >&2; exit 1;; esac
+        {{end}}rtk task --parallel --output=interleaved {{range .CLI_ARGS_LIST}}dev:{{.}} {{end}}
+        {{else}}rtk task --parallel --output=interleaved dev:api dev:worker dev:scheduler dev:web
+        {{end}}
   dev:api:
     desc: Run the Go Huma API
     cmds: ["rtk go run ./apps/api"]
