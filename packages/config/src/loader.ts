@@ -10,7 +10,7 @@ export type LoadConfigOptions = {
 
 type ConfigRecord = Record<string, unknown>;
 
-const moduleNamePattern = /^[a-z][a-z0-9-]*$/;
+const moduleNamePattern = /^[a-z][a-z0-9_]*$/;
 const interpolationPattern = /\$\{([A-Z][A-Z0-9_]*)(:-([^}]*))?\}/g;
 
 function isPlainRecord(value: unknown): value is ConfigRecord {
@@ -70,6 +70,19 @@ function interpolate(
 ): unknown {
   if (typeof value === "string") {
     const source = sources.get(path.join(".")) ?? "unknown";
+
+    if (value.includes("${")) {
+      const firstStart = value.indexOf("${");
+      const nextStart = value.indexOf("${", firstStart + 2);
+      const firstEnd = value.indexOf("}", firstStart);
+      if (nextStart !== -1 && firstEnd !== -1 && nextStart < firstEnd) {
+        throw new Error(`Invalid configuration interpolation in module "${source}"`);
+      }
+      const withoutInterpolation = value.replace(interpolationPattern, "");
+      if (withoutInterpolation.includes("${")) {
+        throw new Error(`Invalid configuration interpolation in module "${source}"`);
+      }
+    }
 
     return value.replace(interpolationPattern, (_match, name: string, defaultSyntax?: string, fallback?: string) => {
       const resolved = environment[name];

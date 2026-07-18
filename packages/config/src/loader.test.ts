@@ -140,3 +140,35 @@ test("interpolates only once and preserves non-interpolated scalar types", () =>
     },
   );
 });
+
+test("loads snake_case configuration roots", () => {
+  withConfigDirectory(
+    {
+      database: "database:\n  url: ${DATABASE_URL}\n",
+      http_api: "http_api:\n  port: ${API_PORT:-4101}\n",
+    },
+    (configDirectory) => {
+      expect(
+        loadConfig({
+          configDirectory,
+          modules: ["database", "http_api"],
+          environment: { DATABASE_URL: "postgresql://database" },
+        }),
+      ).toEqual({
+        database: { url: "postgresql://database" },
+        http_api: { port: "4101" },
+      });
+    },
+  );
+});
+
+test("rejects nested interpolation syntax", () => {
+  withConfigDirectory(
+    { invalid: "value: ${A:-${B}}\n" },
+    (configDirectory) => {
+      expect(() => loadConfig({ configDirectory, modules: ["invalid"], environment: {} })).toThrow(
+        "Invalid configuration interpolation",
+      );
+    },
+  );
+});

@@ -1,1 +1,4 @@
-OPENAPI_SERVER_URL: ${OPENAPI_SERVER_URL:-http://localhost:4100}
+web:
+  public:
+    api_base_url: ${WEB_API_BASE_URL:-http://localhost:4101}
+    realtime_url: ${WEB_REALTIME_URL:-http://localhost:4102}

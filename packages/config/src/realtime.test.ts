@@ -14,7 +14,7 @@ test("creates a scoped realtime runtime configuration", () => {
         environment: {
           DATABASE_URL: "postgresql://db",
           REALTIME_TICKET_SECRET: "ticket-secret",
-          REALTIME_PUBLISH_API_KEY: "publisher-key",
+          REALTIME_INTERNAL_API_KEY: "publisher-key",
         },
       }) as Record<string, string | undefined>,
     ),

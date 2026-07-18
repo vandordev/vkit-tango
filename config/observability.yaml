@@ -1,0 +1,2 @@
+observability:
+  log_level: ${LOG_LEVEL:-info}
