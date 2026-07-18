@@ -1,0 +1,21 @@
+apiVersion: vandor.dev/v1alpha1
+name: vandor/go
+version: 0.6.0
+kind: template-pack
+exports:
+  usecase:
+    kind: template
+    templates:
+      - path: templates/usecase.vxt
+  http-handler:
+    kind: template
+    templates:
+      - path: templates/http_handler.vxt
+  job:
+    kind: template
+    templates:
+      - path: templates/job.vxt
+  scheduler:
+    kind: template
+    templates:
+      - path: templates/scheduler.vxt

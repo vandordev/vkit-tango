@@ -1,0 +1,40 @@
+@template job
+@input name string
+
+@file "{{ project.go.module_root }}/internal/worker/river/{{ name | snake }}.go"
+package river
+
+import (
+	"context"
+
+	riverqueue "github.com/riverqueue/river"
+	"github.com/vandordev/vkit-tango/internal/contract"
+	"github.com/vandordev/vkit-tango/internal/usecase"
+)
+
+type {{ name | pascal }}Args struct{}
+
+func ({{ name | pascal }}Args) Kind() string { return "{{ name | snake }}.v1" }
+
+type {{ name | pascal }}Worker struct {
+	riverqueue.WorkerDefaults[{{ name | pascal }}Args]
+	command contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result]
+}
+
+func (worker *{{ name | pascal }}Worker) Work(ctx context.Context, _ *riverqueue.Job[{{ name | pascal }}Args]) error {
+	_, err := worker.command.Execute(ctx, usecase.{{ name | pascal }}Input{})
+	return err
+}
+
+type {{ name | pascal }}Registrar struct { command contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result] }
+
+var _ contract.WorkerRegistrar = (*{{ name | pascal }}Registrar)(nil)
+
+func New{{ name | pascal }}Registrar(command contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result]) *{{ name | pascal }}Registrar {
+	return &{{ name | pascal }}Registrar{command: command}
+}
+
+func (registrar *{{ name | pascal }}Registrar) RegisterWorkers(workers *riverqueue.Workers) {
+	riverqueue.AddWorker(workers, &{{ name | pascal }}Worker{command: registrar.command})
+}
+@endfile

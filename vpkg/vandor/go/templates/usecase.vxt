@@ -1,0 +1,43 @@
+@template usecase
+@input name string
+
+@file "{{ project.go.module_root }}/internal/usecase/{{ name | snake }}.go"
+package usecase
+
+import (
+	"context"
+
+	"github.com/vandordev/vkit-tango/internal/contract"
+)
+
+type {{ name | pascal }}Input struct{}
+type {{ name | pascal }}Result struct{}
+
+type {{ name | pascal }} struct{ runner Runner }
+
+var _ contract.Command[{{ name | pascal }}Input, {{ name | pascal }}Result] = (*{{ name | pascal }})(nil)
+
+func New{{ name | pascal }}(runner Runner) *{{ name | pascal }} {
+	return &{{ name | pascal }}{runner: runner}
+}
+
+func (*{{ name | pascal }}) Execute(context.Context, {{ name | pascal }}Input) ({{ name | pascal }}Result, error) {
+	return {{ name | pascal }}Result{}, nil
+}
+@endfile
+
+@file "{{ project.go.module_root }}/internal/usecase/{{ name | snake }}_test.go"
+package usecase_test
+
+import (
+	"testing"
+
+	"github.com/vandordev/vkit-tango/internal/contract"
+	"github.com/vandordev/vkit-tango/internal/usecase"
+)
+
+func TestNew{{ name | pascal }}ImplementsCommand(t *testing.T) {
+	command := usecase.New{{ name | pascal }}(usecase.Runner{})
+	var _ contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result] = command
+}
+@endfile

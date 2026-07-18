@@ -1,0 +1,36 @@
+@template http_handler
+@input name string
+@input method string
+@input path string
+
+@file "{{ project.go.module_root }}/internal/transport/http/handler/{{ name | snake }}/{{ name | snake }}.go"
+package {{ name | snake }}
+
+import (
+	"context"
+
+	"github.com/danielgtaylor/huma/v2"
+	"github.com/vandordev/vkit-tango/internal/contract"
+	"github.com/vandordev/vkit-tango/internal/transport/http/method"
+	"github.com/vandordev/vkit-tango/internal/usecase"
+)
+
+type {{ name | pascal }}Handler struct {
+	api huma.API
+	command contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result]
+}
+
+var _ contract.HTTPHandler = (*{{ name | pascal }}Handler)(nil)
+
+func New{{ name | pascal }}Handler(api huma.API, command contract.Command[usecase.{{ name | pascal }}Input, usecase.{{ name | pascal }}Result]) *{{ name | pascal }}Handler {
+	return &{{ name | pascal }}Handler{api: api, command: command}
+}
+
+func (handler *{{ name | pascal }}Handler) RegisterRoutes() {
+	method.{{ method | upper }}(handler.api, "{{ path }}", "{{ name | pascal }}", nil, handler.Handle)
+}
+
+func (handler *{{ name | pascal }}Handler) Handle(context.Context, *struct{}) (*struct{}, error) {
+	return &struct{}{}, nil
+}
+@endfile
