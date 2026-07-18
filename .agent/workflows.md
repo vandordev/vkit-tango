@@ -51,7 +51,12 @@
    as `unknown` and is narrowed before use; handwritten `any` is not allowed.
 2. Do not edit generated clients. Solve generator-originated `any` through a
    generator change or a narrowly scoped lint exception.
-3. Validate public input and identify authorization or ownership before adding
+3. The shared QueryClient invalidates all query keys after a successful
+   mutation without awaiting refetches. Do not repeat global invalidation in
+   each mutation; use a local awaited invalidation only when a specific UX
+   must wait for fresh data. Socket.IO events still invalidate affected query
+   keys for mutations made outside this browser.
+4. Validate public input and identify authorization or ownership before adding
    an operation. Browser, realtime, job, log, error, and config boundaries
    receive only needed data. Private credentials never reach browser config or
    public responses.
