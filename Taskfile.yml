@@ -7,6 +7,16 @@ tasks:
   install:
     desc: Install Bun workspace dependencies
     cmds: ["rtk bun install --ignore-scripts"]
+  doctor:
+    desc: Verify required tools, local files, and Go configuration loading
+    cmds:
+      - |
+        for tool in go bun task vx docker; do command -v "$tool" >/dev/null || { echo "missing required tool: $tool" >&2; exit 1; }; done
+        docker compose version >/dev/null || { echo "docker compose is required" >&2; exit 1; }
+        test -f .env || { echo "missing .env; run: cp .env.example .env" >&2; exit 1; }
+        test -f .env.example || { echo "missing .env.example" >&2; exit 1; }
+        test -f docker-compose.yml || { echo "missing docker-compose.yml" >&2; exit 1; }
+        rtk go test ./internal/config -run '^TestLoad' -count=1
   dev:
     desc: Run default services, or selected services after -- (api worker scheduler web realtime)
     cmds:
@@ -73,9 +83,21 @@ tasks:
     cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface scheduler"]
   sync:
     cmds: ["rtk task sync:usecase", "rtk task sync:http", "rtk task sync:worker", "rtk task sync:scheduler", "rtk gofmt -w internal/generated/fx", "rtk task api:client:generate"]
+  test:go:
+    desc: Run all Go tests
+    cmds: ["rtk go test ./... -count=1"]
+  test:web:
+    desc: Run TanStack Start tests
+    cmds: ["rtk bun test apps/web"]
+  test:realtime:
+    desc: Run Socket.IO runtime and shared realtime tests
+    cmds: ["rtk bun test apps/realtime packages/realtime"]
+  test:config:
+    desc: Run shared configuration tests
+    cmds: ["rtk bun test packages/config"]
   test:
     desc: Run Go and retained TypeScript tests
-    cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs", "rtk bun run scripts/check-vpkg-templates.ts"]
+    cmds: ["rtk task test:go", "rtk task test:web", "rtk task test:realtime", "rtk task test:config", "rtk bun run check:tasks", "rtk bun run check:architecture-docs", "rtk bun run scripts/check-vpkg-templates.ts"]
   lint:
     desc: Lint retained TypeScript workspaces
     cmds: ["rtk bun run --cwd apps/web lint", "rtk bun run --cwd apps/realtime lint", "rtk bun run --cwd packages/config lint", "rtk bun run --cwd packages/realtime lint"]
@@ -88,3 +110,6 @@ tasks:
   build:
     desc: Build all Go and retained TypeScript runtimes
     cmds: ["rtk go build ./apps/api ./apps/worker ./apps/scheduler ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build", "rtk git diff --exit-code -- apps/web/src/routeTree.gen.ts"]
+  ci:
+    desc: Run the complete CI verification locally
+    cmds: ["rtk task quality", "rtk task build"]

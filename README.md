@@ -47,6 +47,7 @@ through environment interpolation.
 
 ```bash
 task install
+task doctor
 cp .env.example .env
 task migrate
 task dev
@@ -57,14 +58,24 @@ task dev:scheduler
 task dev:web
 task dev:realtime
 task api:client:generate
+task test:go
+task test:web
+task test:realtime
+task test:config
 task quality
 task build
+task ci
 ```
 
 `task dev` runs API, worker, scheduler, and web together. Select services with
 arguments after `--`, for example `task dev -- api web realtime`; realtime is
 not part of the default set. Run `task migrate` separately before starting the
 long-lived services.
+
+Run `task doctor` after setup to verify local tools, Docker Compose, `.env`,
+and Go configuration loading. Use the segmented `task test:*` commands for
+focused feedback. `task ci` runs `task quality` followed by `task build`, the
+same full verification expected before integration.
 
 Generate Go surfaces only through Taskfile: `task add:usecase name=...`,
 `task add:http-handler name=... method=PUT path=/api/v1/...`, `task add:job
