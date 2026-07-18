@@ -3,7 +3,7 @@ const guidanceFiles = [".agent/repository-map.md", ".agent/workflows.md", ".agen
 const painPointsFile = "docs/agent-pain-points.md";
 const required = ["Huma", "Ent", "Goose", "River", "/api/v1", "Hey API", "Socket.IO"];
 const requiredByFile: Record<string, string[]> = {
-  "README.md": ["Fx", "internal/contract", "task sync", "task dev"],
+  "README.md": ["Fx", "internal/contract", "task sync", "task dev", "## Prerequisites", "github.com/vandordev/vx/cmd/vx@latest", "rtk-ai/rtk", "Docker Compose"],
   "AGENTS.md": ["Fx", "internal/contract", "task add:*", "task sync"],
   ".agent/architecture.md": ["Fx", "internal/contract", "internal/generated/fx", "transactional command Execute"],
   ".agent/api.md": ["Fx", "humachi", "contract.Command", "task sync", "OperationID", "one command", "strict Go structs"],

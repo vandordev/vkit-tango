@@ -26,7 +26,7 @@ const taskfile = await Bun.file("Taskfile.yml").text();
 if (!taskfile.includes("CLI_ARGS_LIST")) throw new Error("dev task must forward selected services from CLI arguments");
 if (!taskfile.includes("dev:api dev:worker dev:scheduler dev:web")) throw new Error("dev task must define the default service set");
 if (!taskfile.includes('cmds: ["rtk task quality", "rtk task build"]')) throw new Error("ci task must run quality before build");
-if (!taskfile.includes("for tool in go bun task vx docker") || !taskfile.includes("docker compose version") || !taskfile.includes("missing .env")) throw new Error("doctor task must check required local setup");
+if (!taskfile.includes("for tool in go bun task vx docker git") || !taskfile.includes("docker compose version") || !taskfile.includes("missing .env")) throw new Error("doctor task must check required local setup");
 for (const runtime of ["api", "worker", "scheduler"]) {
   if (!taskfile.includes(`rtk go tool air -c dev/air/${runtime}.toml`)) throw new Error(`dev:${runtime} must use its Air configuration`);
 }

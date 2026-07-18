@@ -11,7 +11,7 @@ tasks:
     desc: Verify required tools, local files, and Go configuration loading
     cmds:
       - |
-        for tool in go bun task vx docker; do command -v "$tool" >/dev/null || { echo "missing required tool: $tool" >&2; exit 1; }; done
+        for tool in go bun task vx docker git; do command -v "$tool" >/dev/null || { echo "missing required tool: $tool" >&2; exit 1; }; done
         docker compose version >/dev/null || { echo "docker compose is required" >&2; exit 1; }
         test -f .env || { echo "missing .env; run: cp .env.example .env" >&2; exit 1; }
         test -f .env.example || { echo "missing .env.example" >&2; exit 1; }

@@ -43,6 +43,51 @@ modules it needs (`database`, `http_api`, `worker`, `scheduler`, and `realtime`)
 TypeScript loads only `web` or `realtime`. Secrets are supplied exclusively
 through environment interpolation.
 
+## Prerequisites
+
+Install these tools and ensure their binary directories are on `PATH` before
+running the project:
+
+| Tool | Required version | Purpose |
+| --- | --- | --- |
+| [Go](https://go.dev/dl/) | `1.25.7` | Go runtimes, generators, and the project-managed Air tool. |
+| [Bun](https://bun.com/docs/installation) | `1.3.14` | Web/realtime runtime, workspace dependencies, tests, and generators. |
+| [Task](https://taskfile.dev/docs/installation) | v3 | The only developer and CI command interface. |
+| [RTK](https://github.com/rtk-ai/rtk) | latest | Command proxy used by the Taskfile and AI-agent workflow. |
+| [Docker Engine with Docker Compose](https://docs.docker.com/compose/install/) | Compose v2 | Local PostgreSQL and containerized runtime verification. |
+| [Git](https://git-scm.com/downloads) | current | Source control and generated-output checks. |
+| [`vx`](https://github.com/vandordev/vx) | latest | Internal scaffold runtime called only by `task add:*`. |
+
+On macOS or Linux, install Bun, Task, RTK, and `vx` with:
+
+```bash
+curl -fsSL https://bun.com/install | bash
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b "$HOME/.local/bin"
+curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+go install github.com/vandordev/vx/cmd/vx@latest
+```
+
+Install Go, Docker, and Git using their official installer or your operating
+system package manager. Add `$HOME/.local/bin`, `$HOME/go/bin`, and Bun's
+installation directory to `PATH` if the installer did not do so. Air requires
+no global installation: `task install` downloads it from the `go.mod` tool
+directive.
+
+Verify the setup and bootstrap a local checkout:
+
+```bash
+task install
+cp .env.example .env
+# Set development-safe values for the required secrets in .env.
+task doctor
+docker compose up -d db
+task migrate
+```
+
+`task doctor` reports missing required tools or local files. It also verifies
+that the checked-in Go configuration can load. Do not call `vx` or Air
+directly in normal project workflows; Taskfile tasks own both integrations.
+
 ## Commands
 
 ```bash
