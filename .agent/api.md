@@ -1,3 +1,5 @@
 # API Rules
 
-Huma handlers register business operations only through `/api/v1`. A mutation validates transport input then invokes an intent-named Go usecase; an Ent read may shape a response directly. Goose owns schema history, River owns asynchronous work, and Hey API consumes this Huma contract. Socket.IO is only a realtime invalidation boundary and never a write path.
+`apps/api` is an Uber Fx composition root. Huma with Chi through `humachi` registers business operations only through `/api/v1`; health, readiness, docs, and OpenAPI remain process routes. One handler file owns one method-plus-path operation and validates/maps transport input before calling one typed `internal/contract.Command`.
+
+A mutation invokes an intent-named Go use case; an Ent read may shape a response directly. API handlers do not own transactions, persistence mutations, River enqueueing, or business policy. Generated HTTP registration belongs in `internal/generated/fx` and is refreshed with `task sync:http` or `task sync`; do not hand-maintain provider or route lists. Goose owns schema history, River owns asynchronous work, Hey API consumes the Huma contract, and Socket.IO is only a realtime invalidation boundary, never a write path.

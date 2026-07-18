@@ -1,7 +1,7 @@
 # Web Rules
 
 - Organize UI routes under `apps/web/src/routes`; `__root.tsx` owns the HTML shell and shared providers.
-- Use Eden from `apps/web/src/lib/api`; the server client may use `treaty(app).api`, while browser calls use same-origin `/api`. Do not use tRPC, rewrites, or ad-hoc `fetch` calls in pages/components.
-- Keep `src/server.ts` as the thin TanStack Start server entry: it forwards `/api/*` and `/health` to Elysia `app.fetch`, then delegates all other requests to Start.
-- Browser-visible configuration uses an explicit `VITE_*` key. Database credentials and API secrets never belong in browser code.
-- Keep API data loading in TanStack Router loaders, server functions, or typed client hooks; UI components do not import infrastructure packages.
+- Use the Hey API-generated client and TanStack Query hooks from the Huma OpenAPI contract. Browser requests use the same-origin `/api/*` boundary; do not use tRPC or ad-hoc API clients in pages/components.
+- Keep the TanStack Start server entry thin and delegate Go API traffic to the configured upstream. The API's active business contract is `/api/v1`; health and OpenAPI/docs are process routes.
+- Browser-visible configuration uses an explicit `VITE_*` key. Database credentials, River configuration, and Socket.IO private credentials never belong in browser code.
+- Keep API data loading in TanStack Router loaders, server functions, or typed client hooks; UI components do not import infrastructure packages. Socket.IO remains the realtime invalidation boundary, while Go/Ent/Goose own writes and River owns background work.
