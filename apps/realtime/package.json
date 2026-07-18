@@ -20,6 +20,7 @@
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/bun": "latest",
+    "eslint": "^9.39.5",
     "socket.io-client": "^4.8.1",
     "typescript": "5.9.2"
   }
