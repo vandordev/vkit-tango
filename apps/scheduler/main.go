@@ -5,4 +5,4 @@ import (
 	"go.uber.org/fx"
 )
 
-func main() { fx.New(app.APIModule).Run() }
+func main() { fx.New(app.SchedulerModule).Run() }

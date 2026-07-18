@@ -39,6 +39,20 @@ type Worker struct {
 	MaxWorkers int
 }
 
+type Scheduler struct {
+	Database   Database
+	Realtime   Realtime
+	MaxWorkers int
+}
+
+func LoadScheduler(loader Loader) (Scheduler, error) {
+	worker, err := LoadWorker(loader)
+	if err != nil {
+		return Scheduler{}, err
+	}
+	return Scheduler{Database: worker.Database, Realtime: worker.Realtime, MaxWorkers: worker.MaxWorkers}, nil
+}
+
 func LoadMigrate(loader Loader) (Migrate, error) {
 	loaded, err := loader.Load("database")
 	if err != nil {
@@ -77,7 +91,9 @@ func LoadWorker(loader Loader) (Worker, error) {
 	}
 
 	realtime, err := object(loaded, "realtime")
-	if err != nil { return Worker{}, err }
+	if err != nil {
+		return Worker{}, err
+	}
 	return Worker{Database: Database{URL: stringValue(database, "url")}, Realtime: Realtime{PublicURL: stringValue(realtime, "public_url"), InternalAPIKey: stringValue(realtime, "internal_api_key")}, MaxWorkers: maxWorkers}, nil
 }
 

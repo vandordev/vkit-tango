@@ -13,6 +13,9 @@ tasks:
   dev:worker:
     desc: Run the Go River worker
     cmds: ["rtk go run ./apps/worker"]
+  dev:scheduler:
+    desc: Run the River periodic scheduler
+    cmds: ["rtk go run ./apps/scheduler"]
   dev:web:
     desc: Run the TanStack Start web app
     cmds: ["rtk bun run dev:web"]
@@ -57,4 +60,4 @@ tasks:
     cmds: ["rtk task test", "rtk go vet ./...", "rtk task lint", "rtk task check-types", "rtk task api:client:check", "rtk git diff --check"]
   build:
     desc: Build all Go and retained TypeScript runtimes
-    cmds: ["rtk go build ./apps/api ./apps/worker ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build"]
+    cmds: ["rtk go build ./apps/api ./apps/worker ./apps/scheduler ./apps/migrate", "rtk bun run --cwd apps/web build", "rtk bun run --cwd apps/realtime build"]
