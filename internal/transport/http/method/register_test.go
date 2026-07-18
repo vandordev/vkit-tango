@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -51,5 +52,34 @@ func TestPUTSetsDeterministicOperationID(t *testing.T) {
 	openAPI := api.OpenAPI().Paths["/api/v1/examples/{id}"]
 	if openAPI == nil || openAPI.Put == nil || openAPI.Put.OperationID != "put_api_v1_examples_id" {
 		t.Fatalf("operation = %#v", openAPI)
+	}
+}
+
+func TestTagsDerivesFirstV1Resource(t *testing.T) {
+	if got := method.Tags("/api/v1/system-metadata/{key}"); !reflect.DeepEqual(got, []string{"system-metadata"}) {
+		t.Fatalf("Tags() = %#v", got)
+	}
+}
+
+func TestTagsPanicsWithoutV1Resource(t *testing.T) {
+	defer func() {
+		if recover() == nil {
+			t.Fatal("Tags() did not panic")
+		}
+	}()
+	method.Tags("/api/v1/{id}")
+}
+
+func TestPUTSetsDomainTag(t *testing.T) {
+	router := chi.NewRouter()
+	api := humachi.New(router, huma.DefaultConfig("test", "1.0.0"))
+	path := "/api/v1/examples/{id}"
+	method.PUT(api, path, "Set example", method.Tags(path), func(context.Context, *putInput) (*putOutput, error) {
+		return &putOutput{}, nil
+	})
+
+	operation := api.OpenAPI().Paths[path]
+	if operation == nil || operation.Put == nil || !reflect.DeepEqual(operation.Put.Tags, []string{"examples"}) {
+		t.Fatalf("operation = %#v", operation)
 	}
 }
