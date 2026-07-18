@@ -6,8 +6,12 @@ import { nitro } from "nitro/vite";
 
 export default defineConfig({
   plugins: [
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
-    tanstackStart(),
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+      routeFileIgnorePattern: "\\.test\\.",
+    }),
+    tanstackStart({ router: { routeFileIgnorePattern: "\\.test\\." } }),
     nitro({ preset: "bun" }),
     react(),
   ],

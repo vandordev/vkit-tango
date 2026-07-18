@@ -7,8 +7,10 @@ test("configures TanStack Start with Bun-targeted Nitro", async () => {
   expect(viteConfig).toContain('from "@tanstack/router-plugin/vite"');
   expect(viteConfig).toContain('from "nitro/vite"');
   expect(viteConfig).toContain('nitro({ preset: "bun" })');
-  expect(viteConfig).toContain("tanstackStart()");
-  expect(viteConfig).toContain('tanstackRouter({ target: "react", autoCodeSplitting: true })');
+  expect(viteConfig).toContain("tanstackStart({");
+  expect(viteConfig).toContain('target: "react"');
+  expect(viteConfig).toContain("autoCodeSplitting: true");
+  expect(viteConfig).toContain('tanstackStart({ router: { routeFileIgnorePattern: "\\\\.test\\\\." } })');
 });
 
 test("uses the YAML wrapper without a Next.js command", async () => {
