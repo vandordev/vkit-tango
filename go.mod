@@ -4,6 +4,7 @@ go 1.25.7
 
 require (
 	entgo.io/ent v0.14.6
+	github.com/danielgtaylor/huma/v2 v2.39.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.10.0
 	github.com/pressly/goose/v3 v3.27.2
