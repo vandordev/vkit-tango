@@ -65,4 +65,7 @@
 
 Run `task migrate` before long-lived services. `task dev` starts API, worker,
 scheduler, and web; select services with `task dev -- api web realtime`.
-Realtime is opt-in.
+Realtime is opt-in. The Go runtimes use the repository-managed Air tool via
+their `dev:api`, `dev:worker`, and `dev:scheduler` tasks; do not invoke Air
+directly or install it globally. Ensure `.env` satisfies the selected runtime's
+configuration before starting it.

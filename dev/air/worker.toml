@@ -1,0 +1,22 @@
+root = "."
+tmp_dir = "tmp/air/worker"
+env_files = [".env"]
+
+[build]
+cmd = "go build -o ./tmp/air/worker/app ./apps/worker"
+entrypoint = ["./tmp/air/worker/app"]
+include_ext = ["go", "yaml"]
+include_dir = ["apps/worker", "internal", "database", "config"]
+exclude_dir = ["tmp", ".git", "apps/worker/node_modules", "apps/worker/dist", "apps/web", "apps/realtime", "contracts", "vpkg"]
+exclude_regex = ["_test\\.go"]
+exclude_unchanged = true
+delay = 250
+stop_on_error = true
+send_interrupt = true
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true

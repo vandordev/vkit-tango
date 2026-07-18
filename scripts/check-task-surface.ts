@@ -27,6 +27,10 @@ if (!taskfile.includes("CLI_ARGS_LIST")) throw new Error("dev task must forward 
 if (!taskfile.includes("dev:api dev:worker dev:scheduler dev:web")) throw new Error("dev task must define the default service set");
 if (!taskfile.includes('cmds: ["rtk task quality", "rtk task build"]')) throw new Error("ci task must run quality before build");
 if (!taskfile.includes("for tool in go bun task vx docker") || !taskfile.includes("docker compose version") || !taskfile.includes("missing .env")) throw new Error("doctor task must check required local setup");
+for (const runtime of ["api", "worker", "scheduler"]) {
+  if (!taskfile.includes(`rtk go tool air -c dev/air/${runtime}.toml`)) throw new Error(`dev:${runtime} must use its Air configuration`);
+}
+if (!taskfile.includes("go tool air -v")) throw new Error("doctor task must verify the project-scoped Air tool");
 const syncBlock = taskfile.slice(taskfile.indexOf("  sync:\n"), taskfile.indexOf("  test:\n"));
 if (!syncBlock.includes("rtk task api:client:generate")) throw new Error("sync task must refresh OpenAPI and Hey API output");
 

@@ -67,10 +67,11 @@ task build
 task ci
 ```
 
-`task dev` runs API, worker, scheduler, and web together. Select services with
-arguments after `--`, for example `task dev -- api web realtime`; realtime is
-not part of the default set. Run `task migrate` separately before starting the
-long-lived services.
+`task dev` runs API, worker, scheduler, and web together. API, worker, and
+scheduler use the project-scoped Air tool for Go hot reload; `apps/migrate`
+remains a one-shot command. Select services with arguments after `--`, for
+example `task dev -- api web realtime`; realtime is not part of the default
+set. Run `task migrate` separately before starting the long-lived services.
 
 Run `task doctor` after setup to verify local tools, Docker Compose, `.env`,
 and Go configuration loading. Use the segmented `task test:*` commands for

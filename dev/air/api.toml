@@ -1,0 +1,22 @@
+root = "."
+tmp_dir = "tmp/air/api"
+env_files = [".env"]
+
+[build]
+cmd = "go build -o ./tmp/air/api/app ./apps/api"
+entrypoint = ["./tmp/air/api/app"]
+include_ext = ["go", "yaml"]
+include_dir = ["apps/api", "internal", "database", "config"]
+exclude_dir = ["tmp", ".git", "apps/api/node_modules", "apps/api/dist", "apps/web", "apps/realtime", "contracts", "vpkg"]
+exclude_regex = ["_test\\.go"]
+exclude_unchanged = true
+delay = 250
+stop_on_error = true
+send_interrupt = true
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
