@@ -8,25 +8,25 @@ The migration deliberately does not add a product domain, authentication, a seco
 
 ## Selected approach
 
-`apps/web` becomes a Vite application using TanStack Start, TanStack Router, and Nitro with Bun as the production preset. TanStack Start's file-based server routes own only the framework adapter layer:
+`apps/web` becomes a Vite application using TanStack Start, TanStack Router, and Nitro with Bun as the production preset. TanStack Start's custom server entry owns only the framework adapter layer:
 
 ```text
-Browser -> Eden -> /api/* -> TanStack Start server route -> Elysia app.fetch -> API route
-Browser -> GET /health -> TanStack Start server route -> Elysia app.fetch -> health route
+Browser -> Eden -> /api/* -> TanStack Start server entry -> Elysia app.fetch -> API route
+Browser -> GET /health -> TanStack Start server entry -> Elysia app.fetch -> health route
 ```
 
-The two server routes forward the incoming `Request` unchanged to `@repo/api`'s exported `app.fetch` handler and return its `Response` unchanged. They support the same HTTP methods as the former Next.js Route Handler: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, and `OPTIONS` for `/api/*`, and `GET` for `/health`.
+`src/server.ts` forwards matching incoming `Request` objects unchanged to `@repo/api`'s exported `app.fetch` handler and returns its `Response` unchanged. It supports the same HTTP methods as the former adapter for `/api/*` and forwards `/health`; all other requests go to TanStack Start's default handler.
 
 This preserves the public origin and endpoint paths (`/api/status`, `/api/docs`, `/api/openapi.json`, and `/health`), avoids a reverse proxy and a second default process, and keeps standalone Elysia at port 4101 available for independent deployments.
 
 ## Web application structure
 
-The Next App Router `app/` directory is replaced with TanStack Router source under `apps/web/src/`:
+The former `app/` directory is replaced with TanStack Router source under `apps/web/src/`:
 
 - `router.tsx` creates and registers the TanStack Router instance from generated routes. It enables scroll restoration and intent preloading.
 - `routes/__root.tsx` owns the HTML document, metadata, Mantine providers, the React Query provider, notifications, global styles, and the TanStack `HeadContent` and `Scripts` components.
 - `routes/index.tsx` is the public landing route and `routes/dashboard.tsx` is the dashboard route. They preserve the current content and paths.
-- `routes/api/$.ts` is the Elysia catch-all server route; `routes/health.ts` is the health server route. Neither exports a UI component.
+- `server.ts` is the Elysia adapter in TanStack Start's custom server-entry extension point. It intercepts `/api/*` and `/health`; it does not define a UI route.
 - `lib/api/client.ts` remains the browser-only Eden facade. It calls the same-origin `/api` base path and imports only `type App` from `@repo/api`.
 - `lib/api/server.ts` remains server-only. It uses `treaty(app).api` for server-rendered loaders or server functions, rather than sending an unnecessary loopback request.
 
@@ -60,28 +60,28 @@ The API's `CORS_ORIGIN` continues to default to `http://localhost:4100`, and `OP
 
 ## Documentation and ownership rules
 
-`README.md` is rewritten where it names Next.js, App Router, Route Handlers, Next environment semantics, or `.next` output. It documents TanStack Start, TanStack Router, Vite/Nitro, the embedded server-route adapter, and the same command surface.
+`README.md` is rewritten where it names the former framework, its route handlers, old environment semantics, or `.next` output. It documents TanStack Start, TanStack Router, Vite/Nitro, the embedded server-entry adapter, and the same command surface.
 
 `.agent/web.md`, `.agent/architecture.md`, and `.agent/config.md` are updated to replace Next-specific rules with TanStack Start equivalents. The new rules state that:
 
-- Elysia is embedded only through the two TanStack Start server routes.
+- Elysia is embedded only through the TanStack Start custom server entry.
 - Browser code reaches Elysia only through Eden at same-origin `/api`.
 - Server data access uses a dedicated server-only Eden facade.
 - Browser-visible configuration uses only explicit `VITE_*` values; database and API secrets remain server-only.
 
-The API, database, application, worker, scheduler, queue, storage, and realtime ownership documents remain unchanged except for any Next.js wording that directly describes the old adapter.
+The API, database, application, worker, scheduler, queue, storage, and realtime ownership documents remain unchanged except for wording that directly describes the old adapter.
 
 ## Testing and acceptance criteria
 
 Focused tests are written before each production change. They verify:
 
-- the generated API catch-all forwards every supported request method to Elysia and preserves the response status, body, and headers;
-- the health server route returns Elysia's health response;
+- the server entry forwards API requests to Elysia and preserves the response status, body, and headers;
+- the server entry returns Elysia's health response;
 - the browser Eden facade remains typed and targets same-origin `/api`;
 - the server Eden facade remains isolated from browser entry points;
 - web configuration has no public database value and no dependency on `NEXT_PUBLIC_APP_URL`;
 - the Vite configuration selects the Bun/Nitro runtime and route generation completes;
-- the web Docker/Compose configuration builds and starts the new output without Next.js-specific variables or commands.
+- the web Docker/Compose configuration builds and starts the new output without legacy-framework variables or commands.
 
 The migration is accepted when `task test:web`, `task check-types:web`, and `task build:web` pass; `/health` and `/api/status` respond successfully from the web process on port 4100; and the repository-wide `task quality` and `task build` pass. The standalone `task dev:standalone-api` and its health endpoint remain operational.
 

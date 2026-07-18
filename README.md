@@ -4,7 +4,7 @@ Reusable full-stack boilerplate for building multiple TypeScript applications wi
 
 vkit-rapid gives every new project the same foundation:
 
-- Next.js for the web experience
+- TanStack Start, TanStack Router, Vite, and Nitro for the web experience
 - Elysia on Bun for the HTTP API
 - Eden for end-to-end API type safety
 - Prisma and PostgreSQL for persistence
@@ -36,16 +36,16 @@ The template is designed for teams that want:
 Reads pass through Elysia so the web app and future consumers share the same API boundary:
 
 ```text
-PostgreSQL -> Prisma -> Elysia query route -> Eden -> Next.js
+PostgreSQL -> Prisma -> Elysia query route -> Eden -> TanStack Start
 ```
 
 State changes pass through an application usecase before reaching the transport layer:
 
 ```text
-PostgreSQL -> Prisma -> application usecase -> Elysia mutation route -> Eden -> Next.js
+PostgreSQL -> Prisma -> application usecase -> Elysia mutation route -> Eden -> TanStack Start
 ```
 
-Query routes may use Prisma directly to shape transport-specific read models. Mutation routes validate input and call usecases. Usecases own business rules and transactions; they do not know about HTTP or Next.js.
+Query routes may use Prisma directly to shape transport-specific read models. Mutation routes validate input and call usecases. Usecases own business rules and transactions; they do not know about HTTP or TanStack Start.
 
 ### Asynchronous data flow
 
@@ -61,7 +61,7 @@ The queue boundary uses `pg-boss` on PostgreSQL, so durable jobs, retries, delay
 
 | Workspace              | Responsibility                                                                                            |
 | ---------------------- | --------------------------------------------------------------------------------------------------------- |
-| `apps/web`             | Next.js App Router, `(public)` and `(dashboard)` route groups, Eden consumers                             |
+| `apps/web`             | TanStack Start routes, Vite/Nitro runtime, Mantine UI, and Eden consumers                                 |
 | `apps/api`             | Elysia app factory, standalone HTTP entrypoint, `/api` routes, health checks, validation, errors, logging |
 | `apps/scheduler`       | Optional time-based job scheduling and enqueueing                                                         |
 | `apps/realtime`        | Optional Socket.IO runtime with authenticated tickets and authorized rooms                                |
@@ -76,7 +76,7 @@ The queue boundary uses `pg-boss` on PostgreSQL, so durable jobs, retries, delay
 
 ### Prerequisites
 
-- Bun 1.1.45 (the version pinned by `package.json`)
+- Bun 1.3.14 (the version pinned by `package.json`)
 - Task (`go-task`)
 - PostgreSQL for database-backed features (or `task compose:up` for local PostgreSQL)
 - Docker and Docker Compose for the containerized stack
@@ -101,7 +101,7 @@ Committed files in `config/` are composable configuration modules. Each runtime 
 
 Objects deep-merge; a later array, scalar, or `null` replaces the preceding value. YAML interpolation supports only `${NAME}` and `${NAME:-fallback}` and resolves once against the root `.env` or the deployment environment. `${NAME}` fails when the value is absent or empty; `${NAME:-fallback}` uses its fallback in that case. Use `${OPTIONAL_VALUE:-}` for an optional empty value.
 
-Never write a literal secret in YAML. `DATABASE_URL`, credentials, tokens, and private keys must be interpolation references. The wrapper resolves selected modules before each server starts, then the existing Zod configuration factories validate the result. A server can select any module it needs, but browser code only receives `NEXT_PUBLIC_*` values; server-only values such as `DATABASE_URL` remain unavailable to client components.
+Never write a literal secret in YAML. `DATABASE_URL`, credentials, tokens, and private keys must be interpolation references. The wrapper resolves selected modules before each server starts, then the existing Zod configuration factories validate the result. A server can select any module it needs, but browser code only receives explicit `VITE_*` values; server-only values such as `DATABASE_URL` remain unavailable to client components.
 
 The local services use these endpoints:
 
@@ -181,7 +181,7 @@ Use this sequence when adding a product feature:
 2. Add direct Prisma read queries to the owning Elysia query route.
 3. Put state-changing rules in a usecase under `packages/application`.
 4. Add an Elysia mutation route that validates input and invokes the usecase.
-5. Consume the typed endpoint from Next.js through `apps/web/lib/api` and Eden.
+5. Consume the typed endpoint from TanStack Start through `apps/web/src/lib/api` and Eden.
 6. If work is asynchronous, define a named job, add a worker handler, and add a scheduler only when a time-based trigger is needed.
 7. Add focused tests at the boundary you changed.
 
@@ -192,7 +192,7 @@ This keeps business rules reusable across HTTP requests, scheduled jobs, and wor
 ```text
 apps/
   api/          Elysia app factory and standalone HTTP entrypoint
-  web/          Next.js application
+  web/          TanStack Start application
   scheduler/    optional enqueue-only scheduler process
   worker/       optional asynchronous job process
 packages/
@@ -206,8 +206,8 @@ Taskfile.yml    project command surface
 
 ## Design Principles
 
-- **One HTTP boundary:** Elysia owns application API routes under `/api`, embedded into Next.js through a catch-all Route Handler.
-- **One frontend transport:** Next.js uses Eden and a thin Elysia Route Handler adapter; there is no tRPC or duplicate API proxy.
+- **One HTTP boundary:** Elysia owns application API routes under `/api`, embedded into TanStack Start through the `src/server.ts` server entry.
+- **One frontend transport:** TanStack Start uses Eden and a thin Elysia server-entry adapter; there is no tRPC or duplicate API proxy.
 - **Explicit mutation boundary:** state changes go through application usecases.
 - **Independent runtimes:** web, API, scheduler, and worker can be deployed and scaled separately.
 - **Scoped configuration:** each runtime validates only the environment variables it needs.

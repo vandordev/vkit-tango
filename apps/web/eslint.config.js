@@ -1,3 +1,8 @@
-import { config } from "@repo/eslint-config/base";
+import { config as baseConfig } from "@repo/eslint-config/base";
 
-export default config;
+export default [
+  ...baseConfig,
+  {
+    ignores: [".next/**", ".output/**", ".vite/**"],
+  },
+];

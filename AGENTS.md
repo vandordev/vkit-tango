@@ -13,7 +13,7 @@ Guidelines for Codex and other coding agents working in this repository.
 
 The default application is `apps/web` + `apps/api`:
 
-- `apps/web`: Next.js App Router, `(public)` and `(dashboard)` route groups, Eden consumers, and the embedded API adapter at `app/api/[[...slugs]]/route.ts`.
+- `apps/web`: TanStack Start with TanStack Router file-based routes, Eden consumers, and the embedded API adapter in `src/server.ts`.
 - `apps/api`: Elysia app factory, API routes, validation, errors, logging, and standalone Bun entrypoint.
 - `packages/database`: Prisma schema, migrations, generated client, and singleton client.
 - `packages/application`: mutation usecases and domain rules.
@@ -28,16 +28,16 @@ The default application is `apps/web` + `apps/api`:
 
 - `apps/api/src/app.ts` is the single Elysia app source of truth.
 - `apps/api/src/server.ts` may run that app standalone with `app.listen()`.
-- `apps/web/app/api/[[...slugs]]/route.ts` is a thin adapter that exports Elysia `app.fetch` for supported HTTP methods.
+- `apps/web/src/server.ts` is the thin TanStack Start server entry that forwards `/api/*` and `/health` to Elysia `app.fetch` before delegating all other requests to Start.
 - Keep application endpoints under `/api`; keep process health endpoints under `/health`.
-- Server Components may use `treaty(app).api` directly. Client Components use Eden through the same-origin `/api/*` Route Handler.
-- Do not add tRPC, Next.js API proxies, rewrite-based API duplication, or ad-hoc API `fetch` calls in pages/components.
+- TanStack Start server code may use `treaty(app).api` directly. Browser code uses Eden through same-origin `/api`.
+- Do not add tRPC, framework API proxies, rewrite-based API duplication, or ad-hoc API `fetch` calls in pages/components.
 
 ### Reads and Mutations
 
 - Query routes may call Prisma directly to shape a transport-specific read model.
 - Mutation routes validate transport input, call a usecase, and map the result to the standard response envelope.
-- Usecases own business rules and Prisma transactions; they must not import Elysia or Next.js.
+- Usecases own business rules and Prisma transactions; they must not import Elysia or TanStack Start.
 - All business endpoints return `{ success: true, data }` or `{ success: false, error, message, requestId? }`.
 
 ### Database
@@ -50,10 +50,10 @@ The default application is `apps/web` + `apps/api`:
 ### Configuration
 
 - Server apps use typed loaders from `@repo/config` and `@t3-oss/env-core`.
-- Next.js uses `@t3-oss/env-nextjs` in `apps/web/lib/env.ts`.
+- Browser-visible web values use Vite's explicit `VITE_*` prefix.
 - Do not read `process.env` in feature code. Add new keys to the smallest runtime schema that needs them.
 - Keep `.env.api`, `.env.web`, and optional `.env.worker`/`.env.scheduler` boundaries intact. Never expose `DATABASE_URL` to the browser.
-- Because Elysia is embedded in Next.js, `.env.web` may contain server-only `DATABASE_URL`; validate it under the T3 Env `server` schema, never under `client`.
+- Because Elysia is embedded in TanStack Start, `.env.web` may contain server-only `DATABASE_URL`; validate it under the server schema, never in browser-visible configuration.
 
 ### UI
 

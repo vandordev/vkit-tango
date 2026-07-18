@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the Next.js `apps/web` runtime with a Bun-targeted TanStack Start application while retaining the embedded Elysia API and existing public endpoints.
+**Goal:** Replace the former `apps/web` runtime with a Bun-targeted TanStack Start application while retaining the embedded Elysia API and existing public endpoints.
 
-**Architecture:** TanStack Start owns the application document, file-based page routes, and two thin server-route adapters. `src/routes/api/$.ts` and `src/routes/health.ts` forward the incoming Web `Request` to Elysia's existing `app.fetch`, while Eden continues to be the sole browser and server API client. Vite builds the web application and Nitro emits a Bun-compatible `.output` server.
+**Architecture:** TanStack Start owns the application document, file-based page routes, and a thin custom server entry. `src/server.ts` forwards matching `/api/*` and `/health` Web `Request` objects to Elysia's existing `app.fetch`, while Eden continues to be the sole browser and server API client. Vite builds the web application and Nitro emits a Bun-compatible `.output` server.
 
 **Tech Stack:** Bun 1.3.14, Vite 8.1.5, TanStack Start 1.168.30, TanStack Router 1.170.18, TanStack Router plugin 1.168.22, Nitro 3.0.260610-beta, React 19, Mantine 8, Elysia, Eden, Prisma, Turbo, Docker.
 
@@ -19,8 +19,7 @@
 | `apps/web/src/routes/__root.tsx` | HTML document, metadata, global styles, Mantine, React Query, and notifications. |
 | `apps/web/src/routes/index.tsx` | Public `/` route. |
 | `apps/web/src/routes/dashboard.tsx` | `/dashboard` route. |
-| `apps/web/src/routes/api/$.ts` | Elysia `/api/*` adapter for all supported HTTP methods. |
-| `apps/web/src/routes/health.ts` | Elysia `/health` adapter. |
+| `apps/web/src/server.ts` | TanStack Start server entry that forwards Elysia `/api/*` and `/health` requests. |
 | `apps/web/src/server/elysia-adapter.ts` | Server-only forwarding functions used by the route adapters and direct unit tests. |
 | `apps/web/src/lib/api/client.ts` | Same-origin browser Eden facade. |
 | `apps/web/src/lib/api/server.ts` | Server-only in-process Eden facade. |
@@ -210,8 +209,8 @@ rtk git commit -m "refactor(web): replace Next build boundary with Vite"
 **Files:**
 - Create: `apps/web/src/server/elysia-adapter.ts`
 - Create: `apps/web/src/server/elysia-adapter.test.ts`
-- Create: `apps/web/src/routes/api/$.ts`
-- Create: `apps/web/src/routes/health.ts`
+- Create: `apps/web/src/server.ts`
+- Create: `apps/web/src/server.test.ts`
 
 - [ ] **Step 1: Write failing forwarding tests.**
 
@@ -253,7 +252,7 @@ Run: `rtk bun test apps/web/src/server/elysia-adapter.test.ts`
 
 Expected: FAIL with `Cannot find module './elysia-adapter'`.
 
-- [ ] **Step 3: Implement the adapters and server routes.**
+- [ ] **Step 3: Implement the adapters and server entry.**
 
 Create `apps/web/src/server/elysia-adapter.ts`:
 
@@ -269,39 +268,20 @@ export function forwardHealthRequest(request: Request): Response | Promise<Respo
 }
 ```
 
-Create `apps/web/src/routes/api/$.ts`:
+Create `apps/web/src/server.ts`:
 
 ```ts
-import { createFileRoute } from "@tanstack/react-router";
-import { forwardApiRequest } from "@/server/elysia-adapter";
+import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
+import { forwardApiRequest, forwardHealthRequest } from "./server/elysia-adapter";
 
-const handler = ({ request }: { request: Request }) => forwardApiRequest(request);
+export default createServerEntry({
+  fetch(request) {
+    const pathname = new URL(request.url).pathname;
 
-export const Route = createFileRoute("/api/$")({
-  server: {
-    handlers: {
-      GET: handler,
-      POST: handler,
-      PUT: handler,
-      PATCH: handler,
-      DELETE: handler,
-      OPTIONS: handler,
-    },
-  },
-});
-```
+    if (pathname === "/health") return forwardHealthRequest(request);
+    if (pathname === "/api" || pathname.startsWith("/api/")) return forwardApiRequest(request);
 
-Create `apps/web/src/routes/health.ts`:
-
-```ts
-import { createFileRoute } from "@tanstack/react-router";
-import { forwardHealthRequest } from "@/server/elysia-adapter";
-
-export const Route = createFileRoute("/health")({
-  server: {
-    handlers: {
-      GET: ({ request }) => forwardHealthRequest(request),
-    },
+    return handler.fetch(request);
   },
 });
 ```
@@ -315,8 +295,8 @@ Expected: PASS. Task 3 generates the route tree after it creates the required ro
 - [ ] **Step 5: Commit the embedded adapter.**
 
 ```bash
-rtk git add apps/web/src/server/elysia-adapter.ts apps/web/src/server/elysia-adapter.test.ts apps/web/src/routes/api/$.ts apps/web/src/routes/health.ts
-rtk git commit -m "feat(web): embed Elysia through TanStack Start routes"
+rtk git add apps/web/src/server/elysia-adapter.ts apps/web/src/server/elysia-adapter.test.ts apps/web/src/server.ts apps/web/src/server.test.ts
+rtk git commit -m "feat(web): embed Elysia through TanStack Start server entry"
 ```
 
 ### Task 3: Migrate the application shell and page routes
@@ -706,7 +686,7 @@ test("documents TanStack Start as the web runtime", async () => {
   expect(readme).toContain("TanStack Start");
   expect(readme).not.toContain("Next.js for the web experience");
   expect(webRules).toContain("TanStack Start");
-  expect(webRules).toContain("/api/$");
+  expect(webRules).toContain("src/server.ts");
   expect(webRules).not.toContain("App Router");
 });
 ```
@@ -719,7 +699,7 @@ Expected: FAIL because the README and web rules still name Next.js and App Route
 
 - [ ] **Step 3: Update the public architecture and agent rules.**
 
-Replace all architecture-level Next.js references with TanStack Start, TanStack Router, Vite, and Bun/Nitro terminology. Document the invariant that `/api/$` and `/health` are the only TanStack server routes that import Elysia; all browser requests use Eden at same-origin `/api`; and browser-visible configuration must be explicitly named `VITE_*`. Keep the existing API/usecase/database/queue/runtime ownership language unchanged.
+Replace all architecture-level legacy-framework references with TanStack Start, TanStack Router, Vite, and Bun/Nitro terminology. Document the invariant that `src/server.ts` is the only TanStack server entry that imports Elysia and intercepts `/api/*` and `/health`; all browser requests use Eden at same-origin `/api`; and browser-visible configuration must be explicitly named `VITE_*`. Keep the existing API/usecase/database/queue/runtime ownership language unchanged.
 
 Update README development, build, Docker, and architecture examples so they state that `task dev` runs TanStack Start with embedded Elysia on port 4100, while `task dev:standalone-api` runs Elysia at port 4101.
 

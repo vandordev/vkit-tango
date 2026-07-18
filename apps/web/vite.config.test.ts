@@ -24,3 +24,10 @@ test("uses the YAML wrapper without a Next.js command", async () => {
   expect(devDependencies.prisma).toBe("^6.0.0");
   expect(dependencies.nitro).toBe("3.0.260610-beta");
 });
+
+test("excludes generated Vite and Nitro output from linting", async () => {
+  const eslintConfig = await Bun.file(new URL("./eslint.config.js", import.meta.url)).text();
+
+  expect(eslintConfig).toContain('".output/**"');
+  expect(eslintConfig).toContain('".vite/**"');
+});
