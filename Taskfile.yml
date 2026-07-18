@@ -72,7 +72,7 @@ tasks:
   sync:scheduler:
     cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface scheduler"]
   sync:
-    cmds: ["rtk task sync:usecase", "rtk task sync:http", "rtk task sync:worker", "rtk task sync:scheduler", "rtk gofmt -w internal/generated/fx"]
+    cmds: ["rtk task sync:usecase", "rtk task sync:http", "rtk task sync:worker", "rtk task sync:scheduler", "rtk gofmt -w internal/generated/fx", "rtk task api:client:generate"]
   test:
     desc: Run Go and retained TypeScript tests
     cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs"]

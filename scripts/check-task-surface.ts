@@ -19,6 +19,8 @@ for (const task of [
 const taskfile = await Bun.file("Taskfile.yml").text();
 if (!taskfile.includes("CLI_ARGS_LIST")) throw new Error("dev task must forward selected services from CLI arguments");
 if (!taskfile.includes("dev:api dev:worker dev:scheduler dev:web")) throw new Error("dev task must define the default service set");
+const syncBlock = taskfile.slice(taskfile.indexOf("  sync:\n"), taskfile.indexOf("  test:\n"));
+if (!syncBlock.includes("rtk task api:client:generate")) throw new Error("sync task must refresh OpenAPI and Hey API output");
 
 for (const task of ["start:scheduler", "db:studio"]) {
   if (output.includes(task)) throw new Error(`Obsolete task is still present: ${task}`);

@@ -66,6 +66,7 @@ Generate Go surfaces only through Taskfile: `task add:usecase name=...`,
 `task add:http-handler name=... method=PUT path=/api/v1/...`, `task add:job
 name=...`, and `task add:scheduler name=...`. Refresh committed Fx registries
 with `task sync:usecase`, `task sync:http`, `task sync:worker`,
-`task sync:scheduler`, or `task sync`. Only use cases require a paired test.
+`task sync:scheduler`, or `task sync`. The umbrella `task sync` also refreshes
+the OpenAPI document and Hey API client. Only use cases require a paired test.
 
 Use `docker compose up --build` to run PostgreSQL, migrations, and the Go API. Add `--profile jobs` for the worker.
