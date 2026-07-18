@@ -12,7 +12,7 @@ test("configures TanStack Start with Bun-targeted Nitro", async () => {
 });
 
 test("uses the YAML wrapper without a Next.js command", async () => {
-  const { scripts } = await Bun.file(new URL("./package.json", import.meta.url)).json();
+  const { dependencies, devDependencies, scripts } = await Bun.file(new URL("./package.json", import.meta.url)).json();
 
   expect(scripts.dev).toContain("--env-file=../../.env");
   expect(scripts.dev).toContain("--modules base,web,api,storage");
@@ -21,4 +21,6 @@ test("uses the YAML wrapper without a Next.js command", async () => {
   expect(scripts.start).toContain(".output/server/index.mjs");
   expect(scripts.dev).not.toContain("next");
   expect(scripts.build).not.toContain("next");
+  expect(devDependencies.prisma).toBe("^6.0.0");
+  expect(dependencies.nitro).toBe("3.0.260610-beta");
 });

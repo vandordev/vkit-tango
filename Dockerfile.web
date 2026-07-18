@@ -1,39 +1,39 @@
 # syntax=docker/dockerfile:1.11
-FROM oven/bun:1.1.45-alpine AS base
+FROM oven/bun:1.3.14-alpine AS base
 WORKDIR /app
 FROM base AS prepare
 COPY . .
 RUN --mount=type=cache,id=bun-web-prune,target=/root/.bun/install/cache \
-    bunx turbo@2.8.1 prune web --docker
+    bunx turbo@2.10.5 prune web --docker
 FROM base AS deps
 COPY --from=prepare /app/out/json/ ./
 RUN --mount=type=cache,id=bun-web-install,target=/root/.bun/install/cache \
     bun install --frozen-lockfile --ignore-scripts
-FROM oven/bun:1.1.45-alpine AS builder
+FROM oven/bun:1.3.14-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/config/node_modules ./packages/config/node_modules
 COPY --from=prepare /app/out/full/ ./
+RUN mkdir -p /runtime/config-node-modules && cp -LR packages/config/node_modules/. /runtime/config-node-modules/
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_APP_URL
 ARG DATABASE_URL
-ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV DATABASE_URL=$DATABASE_URL
-RUN cd packages/database && ../../node_modules/.bin/prisma generate
+RUN apps/web/node_modules/.bin/prisma generate --schema=packages/database/prisma/schema.prisma
 COPY config /app/config
-RUN --mount=type=cache,id=next-web-build,target=/app/apps/web/.next/cache \
-    cd apps/web && NEXT_PRIVATE_SKIP_PATCHING=1 bun run ../../packages/config/src/run.ts --modules base,web,api,storage -- bun run next build
-FROM oven/bun:1.1.45-alpine AS runner
+RUN --mount=type=cache,id=tanstack-web-build,target=/app/apps/web/.vite \
+    cd apps/web && bun run ../../packages/config/src/run.ts --modules base,web,api,storage -- bun run vite build
+FROM oven/bun:1.3.14-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4100
 ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.output ./.output
 COPY --from=builder --chown=nextjs:nodejs /app/packages/config ./packages/config
-COPY --from=builder --chown=nextjs:nodejs /app/config /app/config
+RUN rm -rf ./packages/config/node_modules
+COPY --from=builder --chown=nextjs:nodejs /runtime/config-node-modules ./packages/config/node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/config ./config
 USER nextjs
 EXPOSE 4100
-CMD ["bun", "run", "packages/config/src/run.ts", "--modules", "base,web,api,storage", "--", "bun", "run", "apps/web/server.js"]
+CMD ["bun", "run", "packages/config/src/run.ts", "--modules", "base,web,api,storage", "--", "bun", ".output/server/index.mjs"]

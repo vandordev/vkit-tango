@@ -6,7 +6,7 @@
 
 **Architecture:** TanStack Start owns the application document, file-based page routes, and two thin server-route adapters. `src/routes/api/$.ts` and `src/routes/health.ts` forward the incoming Web `Request` to Elysia's existing `app.fetch`, while Eden continues to be the sole browser and server API client. Vite builds the web application and Nitro emits a Bun-compatible `.output` server.
 
-**Tech Stack:** Bun 1.1.45, Vite 8.1.5, TanStack Start 1.168.30, TanStack Router 1.170.18, TanStack Router plugin 1.168.22, Nitro nightly 3.0.1-20260717-080150-bfc2f5ef, React 19, Mantine 8, Elysia, Eden, Prisma, Turbo, Docker.
+**Tech Stack:** Bun 1.3.14, Vite 8.1.5, TanStack Start 1.168.30, TanStack Router 1.170.18, TanStack Router plugin 1.168.22, Nitro 3.0.260610-beta, React 19, Mantine 8, Elysia, Eden, Prisma, Turbo, Docker.
 
 ---
 

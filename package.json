@@ -2,7 +2,7 @@
   "name": "turbostack",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "bun@1.1.45",
+  "packageManager": "bun@1.3.14",
   "scripts": {
     "build": "bun run check-types && turbo run build",
     "start": "bun run start:web",
