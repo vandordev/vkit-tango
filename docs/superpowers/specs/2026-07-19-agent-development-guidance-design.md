@@ -109,14 +109,63 @@ refactor to typed metadata must define the supported metadata keys and value
 shapes before changing the Ent schema, use-case input, Huma input, OpenAPI, and
 Hey API client together. This design does not invent those product schemas.
 
-## 8. Verification
+## 8. Error Contracts and API Compatibility
+
+Huma operations use one documented error-envelope convention with stable,
+machine-readable codes. Handlers map domain errors to that convention rather
+than inventing transport-specific response shapes. Error details do not expose
+secrets, credentials, SQL statements, or internal topology.
+
+Public OpenAPI changes are additive by default. Removing or renaming a public
+field, changing its meaning or type, tightening a previously accepted payload,
+or changing a success/error status is a compatibility review. The workflow
+identifies the Huma DTO, OpenAPI document, generated Hey API client, and web
+consumers that must change together.
+
+## 9. Ent, Goose, and Data Rollout
+
+Schema changes follow a safe order: update the Ent schema, generate the Ent
+client, add an explicit Goose migration, test the migration path, and keep the
+application compatible with the deployed data during rollout. Data backfills
+are explicit, retryable operations rather than incidental side effects of an
+application startup.
+
+Enum, temporal, and typed-JSON changes receive a compatibility review. The
+workflow states when an expand/migrate/contract rollout is required instead of
+assuming a destructive schema change is safe.
+
+## 10. River Reliability and Async Contracts
+
+River job arguments are typed, serializable contracts. They are versioned when
+their meaning changes while queued work may still exist. Jobs and periodic
+schedules are idempotent: retries, duplicate execution, and horizontally
+replicated scheduler processes must not produce duplicate business effects.
+
+Each job explicitly chooses retry, timeout, cancellation, and failure-handling
+behavior. A schedule only enqueues work; it never becomes the source of truth
+for deadline-sensitive business state. Mutation use cases remain responsible
+for deciding which River work is enqueued inside their transaction.
+
+## 11. Security and Boundary Data
+
+Every new public operation identifies its input validation, authorization or
+ownership boundary, and sensitive fields before implementation. Browser,
+realtime, job, log, error, and configuration boundaries receive only the data
+they need. Private credentials, database connection details, and internal
+realtime credentials never cross into browser-visible configuration or public
+responses.
+
+The guidance does not define a product authentication model. It prevents an
+agent from bypassing or inventing one while adding a feature.
+
+## 12. Verification
 
 The verification matrix maps change categories to focused tests, `task sync`,
 `task quality`, and `task build`. Existing architecture-document checks expand
 to require the stable guidance entry points and prevent regressions to the
 documented Huma, type-safety, command-boundary, and generator rules.
 
-## 9. Non-Goals
+## 13. Non-Goals
 
 - Do not create a catch-all `utils` package.
 - Do not turn use-case composition into a workaround for transaction design.
