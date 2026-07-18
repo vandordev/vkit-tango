@@ -75,7 +75,7 @@ tasks:
     cmds: ["rtk task sync:usecase", "rtk task sync:http", "rtk task sync:worker", "rtk task sync:scheduler", "rtk gofmt -w internal/generated/fx", "rtk task api:client:generate"]
   test:
     desc: Run Go and retained TypeScript tests
-    cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs"]
+    cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs", "rtk bun run scripts/check-vpkg-templates.ts"]
   lint:
     desc: Lint retained TypeScript workspaces
     cmds: ["rtk bun run --cwd apps/web lint", "rtk bun run --cwd apps/realtime lint", "rtk bun run --cwd packages/config lint", "rtk bun run --cwd packages/realtime lint"]

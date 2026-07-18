@@ -26,12 +26,16 @@ func New{{ name | pascal }}Handler(api huma.API, command contract.Command[usecas
 	return &{{ name | pascal }}Handler{api: api, command: command}
 }
 
+type input struct{}
+
+type output struct{}
+
 func (handler *{{ name | pascal }}Handler) RegisterRoutes() {
-	method.{{ method | upper }}(handler.api, "{{ path }}", "{{ name | pascal }}", nil, handler.Handle)
+	method.{{ method | upper }}(handler.api, "{{ path }}", "{{ name | pascal }}", method.Tags("{{ path }}"), handler.Handle)
 }
 
-func (handler *{{ name | pascal }}Handler) Handle(ctx context.Context, _ *struct{}) (*struct{}, error) {
+func (handler *{{ name | pascal }}Handler) Handle(ctx context.Context, _ *input) (*output, error) {
 	_, err := handler.command.Execute(ctx, usecase.{{ name | pascal }}Input{})
-	return &struct{}{}, err
+	return &output{}, err
 }
 @endfile
