@@ -9,4 +9,9 @@ test("provides English not-found and error recovery actions", async () => {
   expect(rootRoute).toContain("Try again");
   expect(rootRoute).toContain("onClick={reset}");
   expect(rootRoute).toContain("import.meta.env.DEV");
+  expect(rootRoute).toContain('from "@/components/ui/button"');
+  expect(rootRoute).not.toContain("@mantine/");
+  expect(rootRoute).not.toContain("MantineProvider");
+  expect(rootRoute).not.toContain("ColorSchemeScript");
+  expect(rootRoute).not.toContain("Notifications");
 });

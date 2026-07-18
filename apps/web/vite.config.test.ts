@@ -13,6 +13,26 @@ test("configures TanStack Start with Bun-targeted Nitro", async () => {
   expect(viteConfig).toContain('tanstackStart({ router: { routeFileIgnorePattern: "\\\\.test\\\\." } })');
 });
 
+test("configures Tailwind and shadcn dependencies without Mantine", async () => {
+  const viteConfig = await Bun.file(new URL("./vite.config.ts", import.meta.url)).text();
+  const componentsConfig = await Bun.file(new URL("./components.json", import.meta.url)).text();
+  const { dependencies } = await Bun.file(new URL("./package.json", import.meta.url)).json();
+
+  expect(viteConfig).toContain('from "@tailwindcss/vite"');
+  expect(viteConfig).toContain("tailwindcss()");
+  expect(componentsConfig).toContain('"rsc": false');
+  expect(componentsConfig).toContain('"css": "src/styles.css"');
+  expect(componentsConfig).toContain('"ui": "@/components/ui"');
+  expect(dependencies["@mantine/core"]).toBeUndefined();
+  expect(dependencies["@mantine/hooks"]).toBeUndefined();
+  expect(dependencies["@mantine/notifications"]).toBeUndefined();
+  expect(dependencies.tailwindcss).toBeDefined();
+  expect(dependencies["class-variance-authority"]).toBeDefined();
+  expect(dependencies.clsx).toBeDefined();
+  expect(dependencies["radix-ui"]).toBeDefined();
+  expect(dependencies["tailwind-merge"]).toBeDefined();
+});
+
 test("uses the YAML wrapper without a Next.js command", async () => {
   const { dependencies, devDependencies, scripts } = await Bun.file(new URL("./package.json", import.meta.url)).json();
 

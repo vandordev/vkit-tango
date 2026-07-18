@@ -1,12 +1,20 @@
 import { expect, test } from "bun:test";
 
-test("documents TanStack Start as the web runtime", async () => {
-  const readme = await Bun.file(new URL("../../README.md", import.meta.url)).text();
-  const webRules = await Bun.file(new URL("../../.agent/web.md", import.meta.url)).text();
+test("documents shadcn ui as the default and alternatives as project choices", async () => {
+  const [readme, agentRules, uiRules] = await Promise.all([
+    Bun.file(new URL("../../README.md", import.meta.url)).text(),
+    Bun.file(new URL("../../AGENTS.md", import.meta.url)).text(),
+    Bun.file(new URL("../../.agent/ui.md", import.meta.url)).text(),
+  ]);
+
+  for (const document of [readme, agentRules, uiRules]) {
+    expect(document).toContain("shadcn/ui");
+    expect(document).toContain("one primary UI system");
+    expect(document).toContain("Mantine");
+    expect(document).toContain("MUI");
+  }
 
   expect(readme).toContain("TanStack Start");
-  expect(readme).not.toContain("Next.js for the web experience");
-  expect(webRules).toContain("TanStack Start");
-  expect(webRules).toContain("src/server.ts");
-  expect(webRules).not.toContain("App Router");
+  expect(readme).not.toContain("Mantine by default");
+  expect(agentRules).not.toContain("Mantine is the current default");
 });
