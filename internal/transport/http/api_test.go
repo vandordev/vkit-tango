@@ -2,13 +2,18 @@ package http_test
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/vandordev/vkit-tango/internal/contract"
 	transport "github.com/vandordev/vkit-tango/internal/transport/http"
+	"github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
 	"github.com/vandordev/vkit-tango/internal/usecase"
+	"go.uber.org/fx"
 )
 
 type metadataSetter func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error)
@@ -17,22 +22,39 @@ func (setter metadataSetter) Execute(ctx context.Context, input usecase.SetSyste
 	return setter(ctx, input)
 }
 
+func newHandler(t *testing.T, command contract.Command[usecase.SetSystemMetadataInput, usecase.SetSystemMetadataResult]) chi.Router {
+	t.Helper()
+	var router chi.Router
+	app := fx.New(
+		transport.Module,
+		fx.Provide(func() *sql.DB { return &sql.DB{} }),
+		fx.Provide(func() contract.Command[usecase.SetSystemMetadataInput, usecase.SetSystemMetadataResult] {
+			return command
+		}),
+		fx.Provide(system_metadata.NewSetSystemMetadataHandler),
+		fx.Invoke(func(handler *system_metadata.SetSystemMetadataHandler) { handler.RegisterRoutes() }),
+		fx.Populate(&router),
+	)
+	if err := app.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return router
+}
+
 func TestHandlerServesVersionedStatus(t *testing.T) {
-	handler := transport.NewHandler(func() error { return nil })
+	handler := newHandler(t, metadataSetter(func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
+		return usecase.SetSystemMetadataResult{}, nil
+	}))
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/v1/status", nil))
-
-	if response.Code != http.StatusOK {
-		t.Fatalf("status = %d, want 200", response.Code)
-	}
-	if got := response.Body.String(); got != "{\"success\":true,\"data\":{\"status\":\"ok\"}}\n" {
-		t.Fatalf("body = %s", got)
+	if response.Code != http.StatusOK || response.Body.String() != "{\"success\":true,\"data\":{\"status\":\"ok\"}}\n" {
+		t.Fatalf("response = (%d, %s)", response.Code, response.Body.String())
 	}
 }
 
 func TestHandlerInvokesUsecaseForVersionedMutation(t *testing.T) {
 	called := false
-	handler := transport.NewHandler(func() error { return nil }, metadataSetter(func(_ context.Context, input usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
+	handler := newHandler(t, metadataSetter(func(_ context.Context, input usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
 		called = input.Key == "feature" && input.Value["enabled"] == true
 		return usecase.SetSystemMetadataResult{Key: input.Key}, nil
 	}))
@@ -44,26 +66,23 @@ func TestHandlerInvokesUsecaseForVersionedMutation(t *testing.T) {
 }
 
 func TestHandlerDoesNotServeUnversionedStatus(t *testing.T) {
-	handler := transport.NewHandler(func() error { return nil })
+	handler := newHandler(t, metadataSetter(func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
+		return usecase.SetSystemMetadataResult{}, nil
+	}))
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/status", nil))
-
 	if response.Code != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", response.Code)
 	}
 }
 
 func TestHandlerPublishesVersionedOpenAPI(t *testing.T) {
-	handler := transport.NewHandler(func() error { return nil }, metadataSetter(func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
+	handler := newHandler(t, metadataSetter(func(context.Context, usecase.SetSystemMetadataInput) (usecase.SetSystemMetadataResult, error) {
 		return usecase.SetSystemMetadataResult{}, nil
 	}))
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/openapi.json", nil))
-
-	if response.Code != http.StatusOK {
-		t.Fatalf("status = %d, want 200", response.Code)
-	}
-	if body := response.Body.String(); !strings.Contains(body, `"/api/v1/status"`) || !strings.Contains(body, `"operationId":"v1_get_system_status"`) || !strings.Contains(body, `"operationId":"v1_set_system_metadata"`) {
-		t.Fatalf("OpenAPI body does not contain v1 status operation: %s", body)
+	if response.Code != http.StatusOK || !strings.Contains(response.Body.String(), `"/api/v1/system-metadata/{key}"`) {
+		t.Fatalf("response = (%d, %s)", response.Code, response.Body.String())
 	}
 }

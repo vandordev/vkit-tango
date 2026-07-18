@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 
+	"github.com/vandordev/vkit-tango/internal/contract"
 	transport "github.com/vandordev/vkit-tango/internal/transport/http"
+	"github.com/vandordev/vkit-tango/internal/transport/http/handler/system_metadata"
 	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
@@ -19,9 +22,12 @@ func (openAPIMetadataSetter) Execute(context.Context, usecase.SetSystemMetadataI
 }
 
 func main() {
-	handler := transport.NewHandler(func() error { return nil }, openAPIMetadataSetter{})
+	router := transport.NewRouter(&sql.DB{})
+	api := transport.NewAPI(router)
+	command := contract.Command[usecase.SetSystemMetadataInput, usecase.SetSystemMetadataResult](openAPIMetadataSetter{})
+	system_metadata.NewSetSystemMetadataHandler(api, command).RegisterRoutes()
 	response := httptest.NewRecorder()
-	handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/openapi.json", nil))
+	router.ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/api/openapi.json", nil))
 	if response.Code != http.StatusOK {
 		panic(fmt.Sprintf("OpenAPI export returned HTTP %d", response.Code))
 	}
