@@ -1,29 +1,41 @@
 # vkit-tango
 
-**Tango** adalah singkatan dari **TanStack Start + Go**—sebuah monorepo untuk
-web, API, worker, migrasi, dan realtime dengan PostgreSQL sebagai fondasi
-bersama.
+**Tango** stands for **TanStack Start + Go**—a monorepo for web, APIs, workers,
+migrations, and realtime, all built on PostgreSQL.
 
-Monorepo data-driven untuk TanStack Start, Go, PostgreSQL, dan Socket.IO.
+A data-driven monorepo for TanStack Start, Go, PostgreSQL, and Socket.IO.
 
-UI web memakai shadcn/ui sebagai one primary UI system; Mantine atau MUI hanya dipilih secara sengaja per proyek.
+The web UI uses shadcn/ui as its one primary UI system. Choose Mantine or MUI
+only deliberately for a specific project.
 
 ## Architecture
 
-- `apps/web`: TanStack Start. Browser memanggil Go API melalui `/api/*` dan menggunakan client serta TanStack Query hooks hasil Hey API.
-- `apps/api`: HTTP API Go (Huma). Semua endpoint bisnis menggunakan `/api/v1/*`; `/health`, `/health/ready`, `/api/openapi.json`, dan `/api/docs` bersifat process-level.
-- `apps/worker`: River worker Go. Semua background processing dan jadwal River berjalan di Go.
-- `apps/migrate`: satu proses Goose dan River migration.
-- `database/schema`: Ent schema; generated client berada di `internal/platform/db`.
+- `apps/web`: TanStack Start. The browser calls the Go API through `/api/*`
+  and uses Hey API-generated clients and TanStack Query hooks.
+- `apps/api`: Go HTTP API built with Huma. Every business endpoint uses
+  `/api/v1/*`; `/health`, `/health/ready`, `/api/openapi.json`, and
+  `/api/docs` are process-level endpoints.
+- `apps/worker`: Go River worker. All background processing and River
+  schedules run in Go.
+- `apps/migrate`: Single Goose and River migration process.
+- `database/schema`: Ent schema source; generated client in
+  `internal/platform/db`.
 - `database/migrations`: Goose migrations.
-- `internal/usecase`: satu sumber aturan mutasi bisnis. Handler query boleh memakai Ent langsung; mutasi wajib lewat usecase.
-- `apps/realtime` dan `packages/realtime`: Socket.IO TypeScript. Go mempublikasikan event melalui endpoint privat `/internal/events`; kontraknya ada di `contracts/asyncapi/realtime.v1.yaml`.
+- `internal/usecase`: The single source of business-mutation rules. Query
+  handlers may read Ent directly; mutations must use a use case.
+- `apps/realtime` and `packages/realtime`: TypeScript Socket.IO runtime.
+  Go publishes events to the private `/internal/events` endpoint; its contract
+  is `contracts/asyncapi/realtime.v1.yaml`.
 
-PostgreSQL adalah satu-satunya queue backend. Mutasi Ent dan enqueue River harus berbagi transaksi SQL yang sama.
+PostgreSQL is the only queue backend. Ent mutations and River enqueueing must
+share the same SQL transaction.
 
 ## Configuration
 
-Konfigurasi YAML snake_case berada pada `config/`. Go memuat modul yang dibutuhkan secara eksplisit (`database`, `http_api`, `worker`, `realtime`), sedangkan TypeScript hanya memuat `web` atau `realtime`. Rahasia hanya melalui interpolasi environment.
+Snake_case YAML configuration lives in `config/`. Go explicitly loads the
+modules it needs (`database`, `http_api`, `worker`, and `realtime`), while
+TypeScript loads only `web` or `realtime`. Secrets are supplied exclusively
+through environment interpolation.
 
 ## Commands
 
