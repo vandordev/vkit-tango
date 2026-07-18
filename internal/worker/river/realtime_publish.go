@@ -4,8 +4,8 @@ import (
 	"context"
 
 	riverqueue "github.com/riverqueue/river"
+	"github.com/vandordev/vkit-tango/internal/contract"
 	platformrealtime "github.com/vandordev/vkit-tango/internal/platform/realtime"
-	"github.com/vandordev/vkit-tango/internal/usecase"
 )
 
 type RealtimePublishArgs = platformrealtime.PublishArgs
@@ -19,14 +19,14 @@ func (worker RealtimePublishWorker) Work(ctx context.Context, job *riverqueue.Jo
 	return worker.Publisher.Publish(ctx, job.Args.Event)
 }
 
-// RegisterWorkers installs every typed River worker supported by this runtime.
-// Job handlers may read Ent directly, but database mutations must invoke an
-// internal/usecase command rather than duplicate product rules.
-func RegisterWorkers(publisher platformrealtime.Publisher, mutations ...usecase.SetSystemMetadata) (*riverqueue.Workers, error) {
-	workers := riverqueue.NewWorkers()
-	riverqueue.AddWorker(workers, &RealtimePublishWorker{Publisher: publisher})
-	if len(mutations) == 1 && mutations[0] != nil {
-		riverqueue.AddWorker(workers, &SetSystemMetadataWorker{Mutation: mutations[0]})
-	}
-	return workers, nil
+type RealtimePublishRegistrar struct{ publisher platformrealtime.Publisher }
+
+var _ contract.WorkerRegistrar = (*RealtimePublishRegistrar)(nil)
+
+func NewRealtimePublishRegistrar(publisher platformrealtime.Publisher) *RealtimePublishRegistrar {
+	return &RealtimePublishRegistrar{publisher: publisher}
+}
+
+func (registrar *RealtimePublishRegistrar) RegisterWorkers(workers *riverqueue.Workers) {
+	riverqueue.AddWorker(workers, &RealtimePublishWorker{Publisher: registrar.publisher})
 }
