@@ -16,13 +16,20 @@ RUN bun install --production --frozen-lockfile --ignore-scripts
 
 FROM base AS builder
 COPY --from=build-deps /app/node_modules ./node_modules
+COPY --from=build-deps /app/apps/realtime/node_modules ./apps/realtime/node_modules
+COPY --from=build-deps /app/packages/config/node_modules ./packages/config/node_modules
+COPY --from=build-deps /app/packages/realtime/node_modules ./packages/realtime/node_modules
 COPY --from=pruner /app/out/full/ ./
+COPY config ./config
 RUN cd apps/realtime && bun run build
 
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/apps/realtime/node_modules ./apps/realtime/node_modules
+COPY --from=prod-deps /app/packages/config/node_modules ./packages/config/node_modules
+COPY --from=prod-deps /app/packages/realtime/node_modules ./packages/realtime/node_modules
 COPY --from=builder /app/apps/realtime ./apps/realtime
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/config /app/config

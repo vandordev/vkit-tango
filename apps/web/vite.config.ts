@@ -22,9 +22,6 @@ export default defineConfig({
       "@": new URL("./src", import.meta.url).pathname,
     },
   },
-  ssr: {
-    noExternal: ["@repo/config"],
-  },
   server: {
     proxy: {
       "/api": { target: "http://localhost:4101", changeOrigin: true },
