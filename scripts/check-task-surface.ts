@@ -3,6 +3,7 @@ const output = await new Response(Bun.spawn(["task", "--list"], { stdout: "pipe"
 for (const task of [
   "dev:api",
   "dev:worker",
+	"dev:scheduler",
   "dev:migrate",
   "api:openapi",
   "api:client:generate",
@@ -14,6 +15,6 @@ for (const task of [
   if (!output.includes(task)) throw new Error(`Missing required task: ${task}`);
 }
 
-for (const task of ["dev:scheduler", "start:scheduler", "db:studio"]) {
+for (const task of ["start:scheduler", "db:studio"]) {
   if (output.includes(task)) throw new Error(`Obsolete task is still present: ${task}`);
 }

@@ -70,34 +70,34 @@ export type StatusResponseDataStruct = {
   status: string;
 };
 
-export type V1GetSystemStatusData = {
+export type GetApiV1StatusData = {
   body?: never;
   path?: never;
   query?: never;
   url: "/api/v1/status";
 };
 
-export type V1GetSystemStatusErrors = {
+export type GetApiV1StatusErrors = {
   /**
    * Error
    */
   default: ErrorModel;
 };
 
-export type V1GetSystemStatusError =
-  V1GetSystemStatusErrors[keyof V1GetSystemStatusErrors];
+export type GetApiV1StatusError =
+  GetApiV1StatusErrors[keyof GetApiV1StatusErrors];
 
-export type V1GetSystemStatusResponses = {
+export type GetApiV1StatusResponses = {
   /**
    * OK
    */
   200: StatusResponse;
 };
 
-export type V1GetSystemStatusResponse =
-  V1GetSystemStatusResponses[keyof V1GetSystemStatusResponses];
+export type GetApiV1StatusResponse =
+  GetApiV1StatusResponses[keyof GetApiV1StatusResponses];
 
-export type V1SetSystemMetadataData = {
+export type PutApiV1SystemMetadataKeyData = {
   body: SetSystemMetadataInputBody;
   path: {
     key: string;
@@ -106,22 +106,22 @@ export type V1SetSystemMetadataData = {
   url: "/api/v1/system-metadata/{key}";
 };
 
-export type V1SetSystemMetadataErrors = {
+export type PutApiV1SystemMetadataKeyErrors = {
   /**
    * Error
    */
   default: ErrorModel;
 };
 
-export type V1SetSystemMetadataError =
-  V1SetSystemMetadataErrors[keyof V1SetSystemMetadataErrors];
+export type PutApiV1SystemMetadataKeyError =
+  PutApiV1SystemMetadataKeyErrors[keyof PutApiV1SystemMetadataKeyErrors];
 
-export type V1SetSystemMetadataResponses = {
+export type PutApiV1SystemMetadataKeyResponses = {
   /**
    * OK
    */
   200: SetSystemMetadataOutputBody;
 };
 
-export type V1SetSystemMetadataResponse =
-  V1SetSystemMetadataResponses[keyof V1SetSystemMetadataResponses];
+export type PutApiV1SystemMetadataKeyResponse =
+  PutApiV1SystemMetadataKeyResponses[keyof PutApiV1SystemMetadataKeyResponses];

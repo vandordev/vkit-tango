@@ -4,17 +4,17 @@ import { queryOptions, type UseMutationOptions } from "@tanstack/react-query";
 
 import { client } from "../client.gen";
 import {
+  getApiV1Status,
   type Options,
-  v1GetSystemStatus,
-  v1SetSystemMetadata,
+  putApiV1SystemMetadataKey,
 } from "../sdk.gen";
 import type {
-  V1GetSystemStatusData,
-  V1GetSystemStatusError,
-  V1GetSystemStatusResponse,
-  V1SetSystemMetadataData,
-  V1SetSystemMetadataError,
-  V1SetSystemMetadataResponse,
+  GetApiV1StatusData,
+  GetApiV1StatusError,
+  GetApiV1StatusResponse,
+  PutApiV1SystemMetadataKeyData,
+  PutApiV1SystemMetadataKeyError,
+  PutApiV1SystemMetadataKeyResponse,
 } from "../types.gen";
 
 export type QueryKey<TOptions extends Options> = [
@@ -57,24 +57,21 @@ const createQueryKey = <TOptions extends Options>(
   return [params];
 };
 
-export const v1GetSystemStatusQueryKey = (
-  options?: Options<V1GetSystemStatusData>,
-) => createQueryKey("v1GetSystemStatus", options);
+export const getApiV1StatusQueryKey = (options?: Options<GetApiV1StatusData>) =>
+  createQueryKey("getApiV1Status", options);
 
 /**
  * Get system status
  */
-export const v1GetSystemStatusOptions = (
-  options?: Options<V1GetSystemStatusData>,
-) =>
+export const getApiV1StatusOptions = (options?: Options<GetApiV1StatusData>) =>
   queryOptions<
-    V1GetSystemStatusResponse,
-    V1GetSystemStatusError,
-    V1GetSystemStatusResponse,
-    ReturnType<typeof v1GetSystemStatusQueryKey>
+    GetApiV1StatusResponse,
+    GetApiV1StatusError,
+    GetApiV1StatusResponse,
+    ReturnType<typeof getApiV1StatusQueryKey>
   >({
     queryFn: async ({ queryKey, signal }) => {
-      const { data } = await v1GetSystemStatus({
+      const { data } = await getApiV1Status({
         ...options,
         ...queryKey[0],
         signal,
@@ -82,26 +79,26 @@ export const v1GetSystemStatusOptions = (
       });
       return data;
     },
-    queryKey: v1GetSystemStatusQueryKey(options),
+    queryKey: getApiV1StatusQueryKey(options),
   });
 
 /**
  * Set system metadata
  */
-export const v1SetSystemMetadataMutation = (
-  options?: Partial<Options<V1SetSystemMetadataData>>,
+export const putApiV1SystemMetadataKeyMutation = (
+  options?: Partial<Options<PutApiV1SystemMetadataKeyData>>,
 ): UseMutationOptions<
-  V1SetSystemMetadataResponse,
-  V1SetSystemMetadataError,
-  Options<V1SetSystemMetadataData>
+  PutApiV1SystemMetadataKeyResponse,
+  PutApiV1SystemMetadataKeyError,
+  Options<PutApiV1SystemMetadataKeyData>
 > => {
   const mutationOptions: UseMutationOptions<
-    V1SetSystemMetadataResponse,
-    V1SetSystemMetadataError,
-    Options<V1SetSystemMetadataData>
+    PutApiV1SystemMetadataKeyResponse,
+    PutApiV1SystemMetadataKeyError,
+    Options<PutApiV1SystemMetadataKeyData>
   > = {
     mutationFn: async (fnOptions) => {
-      const { data } = await v1SetSystemMetadata({
+      const { data } = await putApiV1SystemMetadataKey({
         ...options,
         ...fnOptions,
         throwOnError: true,

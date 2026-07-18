@@ -9,12 +9,12 @@ import type {
 } from "./client";
 import { client } from "./client.gen";
 import type {
-  V1GetSystemStatusData,
-  V1GetSystemStatusErrors,
-  V1GetSystemStatusResponses,
-  V1SetSystemMetadataData,
-  V1SetSystemMetadataErrors,
-  V1SetSystemMetadataResponses,
+  GetApiV1StatusData,
+  GetApiV1StatusErrors,
+  GetApiV1StatusResponses,
+  PutApiV1SystemMetadataKeyData,
+  PutApiV1SystemMetadataKeyErrors,
+  PutApiV1SystemMetadataKeyResponses,
 } from "./types.gen";
 
 export type Options<
@@ -38,32 +38,28 @@ export type Options<
 /**
  * Get system status
  */
-export const v1GetSystemStatus = <ThrowOnError extends boolean = false>(
-  options?: Options<V1GetSystemStatusData, ThrowOnError>,
-): RequestResult<
-  V1GetSystemStatusResponses,
-  V1GetSystemStatusErrors,
-  ThrowOnError
-> =>
+export const getApiV1Status = <ThrowOnError extends boolean = false>(
+  options?: Options<GetApiV1StatusData, ThrowOnError>,
+): RequestResult<GetApiV1StatusResponses, GetApiV1StatusErrors, ThrowOnError> =>
   (options?.client ?? client).get<
-    V1GetSystemStatusResponses,
-    V1GetSystemStatusErrors,
+    GetApiV1StatusResponses,
+    GetApiV1StatusErrors,
     ThrowOnError
   >({ url: "/api/v1/status", ...options });
 
 /**
  * Set system metadata
  */
-export const v1SetSystemMetadata = <ThrowOnError extends boolean = false>(
-  options: Options<V1SetSystemMetadataData, ThrowOnError>,
+export const putApiV1SystemMetadataKey = <ThrowOnError extends boolean = false>(
+  options: Options<PutApiV1SystemMetadataKeyData, ThrowOnError>,
 ): RequestResult<
-  V1SetSystemMetadataResponses,
-  V1SetSystemMetadataErrors,
+  PutApiV1SystemMetadataKeyResponses,
+  PutApiV1SystemMetadataKeyErrors,
   ThrowOnError
 > =>
   (options.client ?? client).put<
-    V1SetSystemMetadataResponses,
-    V1SetSystemMetadataErrors,
+    PutApiV1SystemMetadataKeyResponses,
+    PutApiV1SystemMetadataKeyErrors,
     ThrowOnError
   >({
     url: "/api/v1/system-metadata/{key}",
