@@ -102,8 +102,8 @@ serialization, error mapping, and OpenAPI when those behaviors warrant it.
 ## 5. HTTP: Chi, Huma, and One Operation per Handler
 
 HTTP uses Chi as the router and `huma/v2/adapters/humachi` as the Huma adapter.
-The HTTP module creates a Chi router, installs cross-cutting middleware, builds
-the Huma API with `humachi.New`, and exposes the API as a versioned group.
+The HTTP module creates a Chi router, installs cross-cutting middleware, and builds
+the base Huma API with `humachi.New` without an implicit path group.
 Health, readiness, OpenAPI, and docs remain process-level routes according to
 the repository's API conventions.
 
