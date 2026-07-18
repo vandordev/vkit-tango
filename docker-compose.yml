@@ -19,14 +19,12 @@ services:
       dockerfile: Dockerfile.web
       args:
         DATABASE_URL: ${DATABASE_URL}
-        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:4100}
     env_file:
       - .env
     environment:
       NODE_ENV: production
       PORT: 4100
       HOSTNAME: 0.0.0.0
-      NEXT_PUBLIC_APP_URL: http://localhost:4100
       DATABASE_URL: postgresql://boilerplate:boilerplate@db:5432/boilerplate
     ports:
       - "4100:4100"

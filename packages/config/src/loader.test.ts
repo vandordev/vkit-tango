@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { loadConfig } from "./loader";
+import { publicConfigEnvironment } from "./run";
 
 function withConfigDirectory(
   modules: Record<string, string>,
@@ -38,8 +39,22 @@ test("loads the base, api, and web configuration modules", () => {
     NODE_ENV: "test",
     DATABASE_URL: "postgresql://db",
     PORT: "4101",
-    NEXT_PUBLIC_APP_URL: "http://localhost:4100",
   });
+});
+
+test("exposes only explicit Vite public values", () => {
+  withConfigDirectory(
+    { web: "VITE_APP_TITLE: Demo\nDATABASE_URL: ${DATABASE_URL}\n" },
+    (configDirectory) => {
+      expect(
+        publicConfigEnvironment(
+          ["web"],
+          { DATABASE_URL: "postgresql://secret" },
+          configDirectory,
+        ),
+      ).toEqual({ VITE_APP_TITLE: "Demo" });
+    },
+  );
 });
 
 test("deep-merges objects while later arrays replace earlier arrays", () => {

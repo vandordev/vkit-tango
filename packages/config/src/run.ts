@@ -39,7 +39,7 @@ export function publicConfigEnvironment(
 ): Record<string, string> {
   return Object.fromEntries(
     Object.entries(resolvedConfigEnvironment(modules, environment, configDirectory)).filter(([key]) =>
-      key.startsWith("NEXT_PUBLIC_"),
+      key.startsWith("VITE_"),
     ),
   );
 }
