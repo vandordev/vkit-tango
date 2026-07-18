@@ -46,6 +46,25 @@ tasks:
   api:client:check:
     desc: Verify generated API client is current
     cmds: ["rtk task api:client:generate", "rtk git diff --exit-code -- contracts/openapi apps/web/src/lib/api/generated"]
+  add:usecase:
+    cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:usecase --apply --set name={{.name}}', 'task sync:usecase']
+  add:http-handler:
+    cmds: ['test -n "{{.name}}" && test -n "{{.method}}" && test -n "{{.path}}" || { echo "name, method, and path are required" >&2; exit 1; }', 'case "{{.method}}" in GET|POST|PUT|PATCH|DELETE) ;; *) echo "unsupported HTTP method: {{.method}}" >&2; exit 1;; esac', 'rtk vx gen vandor/go:http-handler --apply --set name={{.name}} --set method={{.method}} --set path={{.path}}', 'task sync:http']
+  add:job:
+    cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:job --apply --set name={{.name}}', 'task sync:worker']
+  add:scheduler:
+    cmds: ['test -n "{{.name}}" || { echo "name is required" >&2; exit 1; }', 'rtk vx gen vandor/go:scheduler --apply --set name={{.name}}', 'task sync:scheduler']
+  sync:usecase:
+    cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface usecase"]
+  sync:http:
+    cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface http"]
+  sync:worker:
+    cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface worker"]
+  sync:scheduler:
+    cmds: ["rtk go run ./vpkg/vandor/go/tools/sync --surface scheduler"]
+  sync:
+    deps: [sync:usecase, sync:http, sync:worker, sync:scheduler]
+    cmds: ["rtk gofmt -w internal/generated/fx"]
   test:
     desc: Run Go and retained TypeScript tests
     cmds: ["rtk go test ./... -count=1", "rtk bun test apps/web apps/realtime packages/config packages/realtime", "rtk bun run check:tasks", "rtk bun run check:architecture-docs"]

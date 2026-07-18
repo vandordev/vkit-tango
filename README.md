@@ -17,6 +17,8 @@ only deliberately for a specific project.
   `/api/docs` are process-level endpoints.
 - `apps/worker`: Go River worker. All background processing and River
   schedules run in Go.
+- `apps/scheduler`: Go Fx periodic-enqueue process; it has no executable
+  workers.
 - `apps/migrate`: Single Goose and River migration process.
 - `database/schema`: Ent schema source; generated client in
   `internal/platform/db`.
@@ -45,11 +47,18 @@ cp .env.example .env
 task migrate
 task dev:api
 task dev:worker
+task dev:scheduler
 task dev:web
 task dev:realtime
 task api:client:generate
 task quality
 task build
 ```
+
+Generate Go surfaces only through Taskfile: `task add:usecase name=...`,
+`task add:http-handler name=... method=PUT path=/api/v1/...`, `task add:job
+name=...`, and `task add:scheduler name=...`. Refresh committed Fx registries
+with `task sync:usecase`, `task sync:http`, `task sync:worker`,
+`task sync:scheduler`, or `task sync`. Only use cases require a paired test.
 
 Use `docker compose up --build` to run PostgreSQL, migrations, and the Go API. Add `--profile jobs` for the worker.
