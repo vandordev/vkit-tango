@@ -43,3 +43,19 @@ func TestLoadMigrateParsesDatabaseModule(t *testing.T) {
 		t.Fatalf("Database.URL = %q, want postgresql://database", loaded.Database.URL)
 	}
 }
+
+func TestLoadWorkerParsesConcurrency(t *testing.T) {
+	loaded, err := config.LoadWorker(config.Loader{
+		Directory: filepath.Join("..", "..", "config"),
+		Environment: map[string]string{
+			"DATABASE_URL": "postgresql://database",
+		},
+	})
+	if err != nil {
+		t.Fatalf("LoadWorker() error = %v", err)
+	}
+
+	if loaded.MaxWorkers != 10 {
+		t.Fatalf("MaxWorkers = %d, want 10", loaded.MaxWorkers)
+	}
+}

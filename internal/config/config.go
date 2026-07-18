@@ -33,6 +33,11 @@ type Migrate struct {
 	Database Database
 }
 
+type Worker struct {
+	Database   Database
+	MaxWorkers int
+}
+
 func LoadMigrate(loader Loader) (Migrate, error) {
 	loaded, err := loader.Load("database")
 	if err != nil {
@@ -49,6 +54,28 @@ func LoadMigrate(loader Loader) (Migrate, error) {
 	}
 
 	return Migrate{Database: Database{URL: url}}, nil
+}
+
+func LoadWorker(loader Loader) (Worker, error) {
+	loaded, err := loader.Load("database", "worker")
+	if err != nil {
+		return Worker{}, err
+	}
+
+	database, err := object(loaded, "database")
+	if err != nil {
+		return Worker{}, err
+	}
+	worker, err := object(loaded, "worker")
+	if err != nil {
+		return Worker{}, err
+	}
+	maxWorkers, err := integer(worker, "max_workers")
+	if err != nil {
+		return Worker{}, err
+	}
+
+	return Worker{Database: Database{URL: stringValue(database, "url")}, MaxWorkers: maxWorkers}, nil
 }
 
 func LoadAPI(loader Loader) (API, error) {
