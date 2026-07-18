@@ -4,6 +4,9 @@ Read `README.md`, the relevant `.agent` rules, `.agent/repository-map.md`,
 `.agent/workflows.md`, `.agent/verification.md`, and `git status --short`
 before editing.
 
+Consult `docs/agent-pain-points.md` only when you encounter baseline friction
+or change shared tooling, generators, runtime wiring, or agent guidance.
+
 The web uses shadcn/ui as its one primary UI system; Mantine and MUI are
 alternatives that must be selected explicitly.
 

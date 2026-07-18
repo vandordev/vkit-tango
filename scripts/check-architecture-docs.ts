@@ -1,5 +1,6 @@
 const files = ["README.md", "AGENTS.md", ".agent/architecture.md", ".agent/api.md", ".agent/database.md", ".agent/config.md", ".agent/worker.md", ".agent/web.md"];
 const guidanceFiles = [".agent/repository-map.md", ".agent/workflows.md", ".agent/verification.md"];
+const painPointsFile = "docs/agent-pain-points.md";
 const required = ["Huma", "Ent", "Goose", "River", "/api/v1", "Hey API", "Socket.IO"];
 const requiredByFile: Record<string, string[]> = {
   "README.md": ["Fx", "internal/contract", "task sync", "task dev"],
@@ -26,4 +27,9 @@ for (const file of files) {
 for (const file of guidanceFiles) {
   const content = await Bun.file(file).text();
   for (const term of requiredByFile[file] ?? []) if (!content.includes(term)) throw new Error(`${file} is missing ${term}`);
+}
+
+const painPoints = await Bun.file(painPointsFile).text();
+for (const term of ["pain point", "Evidence", "Regression check", "Resolved"]) {
+  if (!painPoints.includes(term)) throw new Error(`${painPointsFile} is missing ${term}`);
 }
