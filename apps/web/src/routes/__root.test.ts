@@ -14,4 +14,7 @@ test("provides English not-found and error recovery actions", async () => {
   expect(rootRoute).not.toContain("MantineProvider");
   expect(rootRoute).not.toContain("ColorSchemeScript");
   expect(rootRoute).not.toContain("Notifications");
+  expect(rootRoute).toContain("<Button asChild>");
+  expect(rootRoute).toContain('<Link to="/">Back to home</Link>');
+  expect(rootRoute).toContain("bg-background");
 });

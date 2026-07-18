@@ -1,21 +1,10 @@
-import { Box, Button, ColorSchemeScript, createTheme, Group, MantineProvider, Stack, Text, Title } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import { HeadContent, Scripts, createRootRoute, useNavigate } from "@tanstack/react-router";
+import { HeadContent, Link, Scripts, createRootRoute } from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 import { QueryProvider } from "@/components/query-provider";
+import { Button } from "@/components/ui/button";
 import appCss from "@/styles.css?url";
-
-const theme = createTheme({
-  primaryColor: "oriskin",
-  defaultRadius: "md",
-  fontFamily: '"Space Grotesk", system-ui, sans-serif',
-  headings: { fontFamily: '"Space Grotesk", system-ui, sans-serif' },
-  colors: {
-    oriskin: ["#fff1f0", "#ffe1df", "#ffc4bf", "#ff9d96", "#f87168", "#e84f45", "#d93a30", "#b82d25", "#982821", "#7e251f"],
-  },
-});
 
 export const Route = createRootRoute({
   head: () => ({
@@ -25,12 +14,7 @@ export const Route = createRootRoute({
       { title: "Application Workspace" },
       { name: "description", content: "A reusable TanStack Start application workspace" },
     ],
-    links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" },
-      { rel: "stylesheet", href: appCss },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   notFoundComponent: NotFoundPage,
   errorComponent: RouteErrorPage,
@@ -38,46 +22,40 @@ export const Route = createRootRoute({
 });
 
 function FallbackLayout({ children }: { children: ReactNode }) {
-  return (
-    <Box component="main" maw={560} mx="auto" px="md" py={96}>
-      <Stack gap="lg">{children}</Stack>
-    </Box>
-  );
+  return <main className="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center gap-6 px-6 py-24">{children}</main>;
 }
 
 function NotFoundPage() {
-  const navigate = useNavigate();
-
   return (
     <FallbackLayout>
-      <Stack gap="xs">
-        <Title order={1}>Page not found</Title>
-        <Text c="dimmed">The page you are looking for does not exist or has moved.</Text>
-      </Stack>
-      <Group>
-        <Button onClick={() => void navigate({ to: "/" })}>Back to home</Button>
-      </Group>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Page not found</h1>
+        <p className="text-muted-foreground">The page you are looking for does not exist or has moved.</p>
+      </div>
+      <div className="flex flex-wrap gap-3">
+        <Button asChild>
+          <Link to="/">Back to home</Link>
+        </Button>
+      </div>
     </FallbackLayout>
   );
 }
 
 function RouteErrorPage({ error, reset }: ErrorComponentProps) {
-  const navigate = useNavigate();
-
   return (
     <FallbackLayout>
-      <Stack gap="xs">
-        <Title order={1}>Something went wrong</Title>
-        <Text c="dimmed">Please try again. If the problem continues, return to the home page.</Text>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Something went wrong</h1>
+        <p className="text-muted-foreground">Please try again. If the problem continues, return to the home page.</p>
         {/* eslint-disable-next-line turbo/no-undeclared-env-vars -- Vite injects DEV at build time. */}
-        {import.meta.env.DEV && error instanceof Error ? <Text c="dimmed" size="sm">{error.message}</Text> : null}
-      </Stack>
-      <Group>
+        {import.meta.env.DEV && error instanceof Error ? <p className="text-sm text-muted-foreground">{error.message}</p> : null}
+      </div>
+      <div className="flex flex-wrap gap-3">
         <Button onClick={reset}>Try again</Button>
-        <Button onClick={() => void navigate({ to: "/" })} variant="default">
-          Back to home
+        <Button asChild variant="outline">
+          <Link to="/">Back to home</Link>
         </Button>
-      </Group>
+      </div>
     </FallbackLayout>
   );
 }
@@ -86,16 +64,10 @@ function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <ColorSchemeScript defaultColorScheme="light" />
         <HeadContent />
       </head>
-      <body>
-        <MantineProvider defaultColorScheme="light" theme={theme}>
-          <QueryProvider>
-            <Notifications position="top-right" />
-            {children}
-          </QueryProvider>
-        </MantineProvider>
+      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+        <QueryProvider>{children}</QueryProvider>
         <Scripts />
       </body>
     </html>
