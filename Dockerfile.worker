@@ -6,6 +6,8 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /worker ./apps/worker
 FROM alpine:3.22
 WORKDIR /app
-COPY --from=build /worker /worker
-COPY config ./config
+RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 --ingroup app app
+COPY --from=build --chown=app:app /worker /worker
+COPY --chown=app:app config ./config
+USER app
 CMD ["/worker"]

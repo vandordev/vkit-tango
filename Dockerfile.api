@@ -6,8 +6,10 @@ COPY . .
 RUN CGO_ENABLED=0 go build -o /api ./apps/api
 FROM alpine:3.22
 WORKDIR /app
-COPY --from=build /api /api
-COPY config ./config
-COPY database ./database
+RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 --ingroup app app
+COPY --from=build --chown=app:app /api /api
+COPY --chown=app:app config ./config
+COPY --chown=app:app database ./database
+USER app
 EXPOSE 4101
 CMD ["/api"]
