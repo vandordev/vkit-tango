@@ -2,7 +2,8 @@
 
 Read `README.md`, the relevant `.agent` rules, and `git status --short` before editing.
 
-Web memakai shadcn/ui sebagai one primary UI system; Mantine dan MUI adalah alternatif yang harus dipilih secara eksplisit.
+The web uses shadcn/ui as its one primary UI system; Mantine and MUI are
+alternatives that must be selected explicitly.
 
 - Go owns Huma HTTP, Ent persistence, Goose migrations, River schedules/jobs, and every business mutation.
 - Active Huma routes use `/api/v1/*`; health/docs/OpenAPI are unversioned process routes.
