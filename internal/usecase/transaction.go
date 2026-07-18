@@ -19,6 +19,10 @@ type Runner struct {
 	River    *riverqueue.Client[*sql.Tx]
 }
 
+func NewRunner(database *sql.DB, river *riverqueue.Client[*sql.Tx]) Runner {
+	return Runner{Database: database, River: river}
+}
+
 func (runner Runner) WithinTransaction(ctx context.Context, fn func(context.Context, Transaction) error) error {
 	tx, err := runner.Database.BeginTx(ctx, nil)
 	if err != nil {
