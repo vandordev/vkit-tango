@@ -27,3 +27,19 @@ func TestLoadAPIParsesSelectedModules(t *testing.T) {
 		t.Fatalf("HTTPAPI.Port = %d, want 4101", loaded.HTTPAPI.Port)
 	}
 }
+
+func TestLoadMigrateParsesDatabaseModule(t *testing.T) {
+	loaded, err := config.LoadMigrate(config.Loader{
+		Directory: filepath.Join("..", "..", "config"),
+		Environment: map[string]string{
+			"DATABASE_URL": "postgresql://database",
+		},
+	})
+	if err != nil {
+		t.Fatalf("LoadMigrate() error = %v", err)
+	}
+
+	if loaded.Database.URL != "postgresql://database" {
+		t.Fatalf("Database.URL = %q, want postgresql://database", loaded.Database.URL)
+	}
+}

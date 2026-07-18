@@ -29,6 +29,28 @@ type API struct {
 	Realtime Realtime
 }
 
+type Migrate struct {
+	Database Database
+}
+
+func LoadMigrate(loader Loader) (Migrate, error) {
+	loaded, err := loader.Load("database")
+	if err != nil {
+		return Migrate{}, err
+	}
+
+	database, err := object(loaded, "database")
+	if err != nil {
+		return Migrate{}, err
+	}
+	url := stringValue(database, "url")
+	if url == "" {
+		return Migrate{}, fmt.Errorf("configuration \"database.url\" must be a non-empty string")
+	}
+
+	return Migrate{Database: Database{URL: url}}, nil
+}
+
 func LoadAPI(loader Loader) (API, error) {
 	loaded, err := loader.Load("app", "database", "http_api", "realtime", "observability")
 	if err != nil {
